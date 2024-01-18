@@ -6,7 +6,7 @@ import { Figure } from '../figure'
 const ROW_START_INDEX = 1
 
 export class PawnBlack implements Figure {
-  readonly color: Color = Color.WHITE
+  readonly color = Color.WHITE
 
   public constructor(readonly position: Cell) {
   }
@@ -58,12 +58,12 @@ export class PawnBlack implements Figure {
     const { i, j } = this.position
 
     const leftDiagonalCell = board.getCell(i + 1, j - 1)
-    if (leftDiagonalCell?.hasEnemyFigure()) {
+    if (leftDiagonalCell?.hasEnemyFigure(this.color)) {
       moves.push(leftDiagonalCell)
     }
 
     const rightDiagonalCell = board.getCell(i + 1, i + 1)
-    if (rightDiagonalCell?.hasEnemyFigure()) {
+    if (rightDiagonalCell?.hasEnemyFigure(this.color)) {
       moves.push(rightDiagonalCell)
     }
   }

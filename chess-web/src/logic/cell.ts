@@ -1,4 +1,5 @@
 import { Figure } from './figure/figure'
+import { Color } from './figure/color'
 
 /**
  * i - row index on board
@@ -15,5 +16,7 @@ export interface Cell {
 
   isEmpty: () => boolean
 
-  hasEnemyFigure: () => boolean
+  hasEnemyFigure: (color: Color) => boolean
+
+  isEmptyOrHasEnemyFigure: (color: Color) => boolean
 }
