@@ -8,7 +8,7 @@ import { Figure } from './figure/figure'
  * | :-- | :--- | :----- | :----- | :---- | :---- | :----- | :----- | :--- | :------------------------- |
  * | 8   | rook | knight | bishop | queen | king  | bishop | knight | rook | black (i = 0, j = 0..7)    |
  * | 7   | pawn | pawn   | pawn   | pawn  | pawn  | pawn   | pawn   | pawn | black (i = 1, j = 0..7)    |
- * |...  | ...  |  ...   | ...    | ...   | ...   | ...    | ...    | ...  | ...                        |
+ * | ... | ...  |  ...   | ...    | ...   | ...   | ...    | ...    | ...  | ...                        |
  * | 2   | pawn | pawn   | pawn   | pawn  | pawn  | pawn   | pawn   | pawn | white (i = 6, j = 0..7)    |
  * | 1   | rook | knight | bishop | queen | king  | bishop | knight | rook | white (i = 7, j = 0..7)    |
  *

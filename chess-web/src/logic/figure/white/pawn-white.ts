@@ -25,7 +25,7 @@ export class PawnWhite implements Figure {
   }
 
   clone(position: Cell): Figure {
-    return new PawnWhite(position);
+    return new PawnWhite(position)
   }
 
   /**
@@ -47,8 +47,8 @@ export class PawnWhite implements Figure {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
-      const doubleForwardCell = board.getCell(i - 2, j)
-      if (doubleForwardCell?.isEmpty()) {
+      const doubleForwardCell = board.getCell(i - 2, j)!
+      if (doubleForwardCell.isEmpty()) {
         moves.push(doubleForwardCell)
       }
     }
@@ -60,14 +60,14 @@ export class PawnWhite implements Figure {
   private captureDiagonal(board: Board, moves: Cell[]): void {
     const { i, j } = this.position
 
-    const leftDiagonalCell = board.getCell(i - 1, j - 1);
-    if (leftDiagonalCell?.hasEnemyFigure()) {
-      moves.push(leftDiagonalCell);
+    const leftDiagonalCell = board.getCell(i - 1, j - 1)!
+    if (leftDiagonalCell.hasEnemyFigure()) {
+      moves.push(leftDiagonalCell)
     }
 
-    const rightDiagonalCell = board.getCell(i - 1, j + 1);
+    const rightDiagonalCell = board.getCell(i - 1, j + 1)
     if (rightDiagonalCell?.hasEnemyFigure()) {
-      moves.push(rightDiagonalCell);
+      moves.push(rightDiagonalCell)
     }
   }
 }

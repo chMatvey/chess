@@ -1,6 +1,6 @@
-import { Board } from '../../board';
-import { Cell } from '../../cell';
-import { Color } from '../color';
+import { Board } from '../../board'
+import { Cell } from '../../cell'
+import { Color } from '../color'
 import { Figure } from '../figure'
 
 const ROW_START_INDEX = 1
@@ -12,13 +12,13 @@ export class PawnBlack implements Figure {
   }
 
   moves(board: Board): Cell[] {
-    const moves: Cell[] = [];
+    const moves: Cell[] = []
 
     this.moveForward(board, moves)
     this.moveDoubleForward(board, moves)
     this.captureDiagonal(board, moves)
 
-    return moves;
+    return moves
   }
 
   clone(position: Cell): Figure {
@@ -31,8 +31,8 @@ export class PawnBlack implements Figure {
   private moveForward(board: Board, moves: Cell[]): void {
     const { i, j } = this.position
 
-    const forwardCell = board.getCell(i + 1, j)
-    if (forwardCell?.isEmpty()) {
+    const forwardCell = board.getCell(i + 1, j)!
+    if (forwardCell.isEmpty()) {
       moves.push(forwardCell)
     }
   }
@@ -44,8 +44,8 @@ export class PawnBlack implements Figure {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
-      const doubleForwardCell = board.getCell(i + 2, j)
-      if (doubleForwardCell?.isEmpty()) {
+      const doubleForwardCell = board.getCell(i + 2, j)!
+      if (doubleForwardCell.isEmpty()) {
         moves.push(doubleForwardCell)
       }
     }
@@ -57,14 +57,14 @@ export class PawnBlack implements Figure {
   private captureDiagonal(board: Board, moves: Cell[]): void {
     const { i, j } = this.position
 
-    const leftDiagonalCell = board.getCell(i + 1, j - 1);
-    if (leftDiagonalCell && leftDiagonalCell.figure && leftDiagonalCell.figure.color !== this.color) {
-      moves.push(leftDiagonalCell);
+    const leftDiagonalCell = board.getCell(i + 1, j - 1)
+    if (leftDiagonalCell?.hasEnemyFigure()) {
+      moves.push(leftDiagonalCell)
     }
 
-    const rightDiagonalCell = board.getCell(i + 1, i + 1);
-    if (rightDiagonalCell && rightDiagonalCell.figure && rightDiagonalCell.figure.color !== this.color) {
-      moves.push(rightDiagonalCell);
+    const rightDiagonalCell = board.getCell(i + 1, i + 1)
+    if (rightDiagonalCell?.hasEnemyFigure()) {
+      moves.push(rightDiagonalCell)
     }
   }
 }
