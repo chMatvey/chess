@@ -1,6 +1,9 @@
 import { Cell } from './cell'
 import { Figure } from './figure/figure'
 import { Color } from './figure/color'
+import { isValidPosition } from './cell-util'
+import { createCells, createFigures } from './board-util'
+import { FigureType } from './figure/figure-type'
 
 /**
  * Board is two-dimensional array 8x8 (8 rows and cols)
@@ -37,4 +40,25 @@ export interface Board {
   getCell: (i: number, j: number) => Cell | null
 
   kingPosition: (color: Color) => Cell
+}
+
+class BoardImpl implements Board {
+  cells: Cell[][]
+  figures: Figure[]
+
+  constructor() {
+    this.cells = createCells()
+    this.figures = createFigures(this.cells)
+  }
+
+  getCell(i: number, j: number): Cell | null {
+    return isValidPosition(i, j) ? this.cells[i][j] : null
+  }
+
+  kingPosition(color: Color): Cell {
+    return this.figures
+      .filter(figure => figure.color === color)
+      .find(figure => figure.type === FigureType.KING )
+      ?.position!
+  }
 }

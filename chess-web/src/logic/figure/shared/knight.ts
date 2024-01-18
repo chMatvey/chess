@@ -2,6 +2,7 @@ import { Figure } from '../figure'
 import { Cell } from '../../cell'
 import { Color } from '../color'
 import { Board } from '../../board'
+import { FigureType } from '../figure-type'
 
 const DIRECTIONS = [
   [2, 1],
@@ -17,6 +18,7 @@ const DIRECTIONS = [
 export abstract class Knight implements Figure {
   abstract position: Cell
   abstract color: Color
+  readonly type = FigureType.KNIGHT
 
   moves(board: Board): Cell[] {
     const { i, j } = this.position

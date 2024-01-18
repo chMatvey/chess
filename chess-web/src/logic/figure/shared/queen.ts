@@ -3,6 +3,7 @@ import { Cell } from '../../cell'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { isValidPosition } from '../../cell-util'
+import { FigureType } from '../figure-type'
 
 const DIRECTIONS = [
   [1, 0],
@@ -18,6 +19,7 @@ const DIRECTIONS = [
 export abstract class Queen implements Figure {
   abstract position: Cell
   abstract color: Color
+  readonly type = FigureType.QUEEN
 
   moves(board: Board): Cell[] {
     const moves: Cell[] = []

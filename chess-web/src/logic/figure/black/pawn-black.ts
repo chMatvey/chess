@@ -2,11 +2,13 @@ import { Board } from '../../board'
 import { Cell } from '../../cell'
 import { Color } from '../color'
 import { Figure } from '../figure'
+import { FigureType } from '../figure-type'
 
 const ROW_START_INDEX = 1
 
 export class PawnBlack implements Figure {
   readonly color = Color.WHITE
+  readonly type = FigureType.PAWN
 
   public constructor(readonly position: Cell) {
   }

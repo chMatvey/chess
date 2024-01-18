@@ -2,6 +2,7 @@ import { Figure } from '../figure'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { Cell } from '../../cell'
+import { FigureType } from '../figure-type'
 
 /**
  * A2...H2 cells
@@ -10,6 +11,7 @@ const ROW_START_INDEX = 6
 
 export class PawnWhite implements Figure {
   readonly color = Color.WHITE
+  readonly type = FigureType.PAWN
 
   constructor(readonly position: Cell) {
   }

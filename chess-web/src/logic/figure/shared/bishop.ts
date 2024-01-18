@@ -3,6 +3,7 @@ import { Cell } from '../../cell'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { isValidPosition } from '../../cell-util'
+import { FigureType } from '../figure-type'
 
 const DIRECTIONS = [
   [1, 1],
@@ -14,6 +15,7 @@ const DIRECTIONS = [
 export abstract class Bishop implements Figure {
   abstract position: Cell
   abstract color: Color
+  readonly type = FigureType.BISHOP
 
   moves(board: Board): Cell[] {
     const moves: Cell[] = []

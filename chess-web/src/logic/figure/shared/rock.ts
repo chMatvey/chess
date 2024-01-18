@@ -3,6 +3,7 @@ import { Cell } from '../../cell'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { BOARD_SIZE } from '../../const'
+import { FigureType } from '../figure-type'
 
 export interface Directions {
   forward: number[],
@@ -14,6 +15,7 @@ export interface Directions {
 export abstract class Rock implements Figure {
   abstract position: Cell
   abstract color: Color
+  readonly type = FigureType.ROOK
 
   protected abstract directions: Directions
 

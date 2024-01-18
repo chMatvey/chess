@@ -1,6 +1,7 @@
 import { Cell } from '../cell'
 import { Board } from '../board'
 import { Color } from './color'
+import { FigureType } from './figure-type'
 
 export interface Figure {
   /**
@@ -8,10 +9,9 @@ export interface Figure {
    */
   position: Cell
 
-  /**
-   * Figure color, white or black
-   */
   color: Color
+
+  type: FigureType
 
   /**
    * @param board game board
