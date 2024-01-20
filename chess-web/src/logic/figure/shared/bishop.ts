@@ -8,7 +8,7 @@ import { FigureType } from '../figure-type'
 const DIRECTIONS = [
   [1, 1],
   [-1, 1],
-  [-1. - 1],
+  [-1, -1],
   [1, -1]
 ]
 

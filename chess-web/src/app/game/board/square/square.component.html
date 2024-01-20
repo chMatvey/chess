@@ -3,7 +3,7 @@
        class="figure-icon"
        [src]="src" [alt]="figure.type">
 
-  <ng-template [ngIf]="displayMovesSubject | async">
+  <ng-template [ngIf]="moveDisplay$ | async">
     <div *ngIf="square.isEmpty(); else captureBlock" class="move-circle"></div>
     <ng-template #captureBlock>
       <div class="move-capture"></div>

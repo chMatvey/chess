@@ -3,7 +3,7 @@ import { Square } from '../../../../logic/square'
 import { Figure } from '../../../../logic/figure/figure'
 import { AsyncPipe, NgClass, NgIf } from '@angular/common'
 import { GameService } from '../../../services/game.service'
-import { BehaviorSubject } from 'rxjs'
+import { Observable, tap } from 'rxjs'
 
 @Component({
   selector: 'app-square',
@@ -20,7 +20,8 @@ export class SquareComponent implements OnInit {
   @Input()
   square!: Square
 
-  displayMovesSubject!: BehaviorSubject<boolean>
+  moveDisplay$!: Observable<boolean>
+  displayMove: boolean = false
 
   constructor(private gameService: GameService) {
   }
@@ -44,12 +45,14 @@ export class SquareComponent implements OnInit {
 
   ngOnInit(): void {
     const {i, j} = this.square
-    this.displayMovesSubject = this.gameService.movesSubject(i, j)
+    this.moveDisplay$ = this.gameService.moveDisplay$(i, j)
+      .pipe(
+        tap(displayMoves => this.displayMove = displayMoves)
+      )
   }
 
   handleClick(): void {
-    const isAnotherFigureMove = this.displayMovesSubject.getValue()
-    if (isAnotherFigureMove) {
+    if (this.displayMove) {
       this.gameService.makeMove(this.square)
     } else {
       this.showMoves()

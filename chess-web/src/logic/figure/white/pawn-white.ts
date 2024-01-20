@@ -2,18 +2,19 @@ import { Figure } from '../figure'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { Square } from '../../square'
-import { FigureType } from '../figure-type'
+import { Pawn } from '../shared/pawn'
 
 /**
  * A2...H2 Squares
  */
 const ROW_START_INDEX = 6
+const ROW_END_INDEX = 0
 
-export class PawnWhite implements Figure {
+export class PawnWhite extends Pawn implements Figure {
   readonly color = Color.WHITE
-  readonly type = FigureType.PAWN
 
   constructor(readonly position: Square) {
+    super()
     position.setFigure(this)
   }
 
@@ -29,6 +30,10 @@ export class PawnWhite implements Figure {
 
   clone(position: Square): Figure {
     return new PawnWhite(position)
+  }
+
+  override canUpgrade(): boolean {
+    return this.position.i === ROW_END_INDEX
   }
 
   /**
