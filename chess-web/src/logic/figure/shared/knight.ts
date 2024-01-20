@@ -1,5 +1,5 @@
 import { Figure } from '../figure'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { FigureType } from '../figure-type'
@@ -16,20 +16,20 @@ const DIRECTIONS = [
 ]
 
 export abstract class Knight implements Figure {
-  abstract position: Cell
+  abstract position: Square
   abstract color: Color
   readonly type = FigureType.KNIGHT
 
-  moves(board: Board): Cell[] {
+  moves(board: Board): Square[] {
     const { i, j } = this.position
 
     return DIRECTIONS
-      .map(directions => board.getCell(i + directions[0], j + directions[1]))
-      .filter(cell => cell != null)
-      .map(cell => cell!)
-      .filter(cell => cell.hasEnemyFigure)
+      .map(directions => board.getSquare(i + directions[0], j + directions[1]))
+      .filter(square => square != null)
+      .map(square => square!)
+      .filter(square => square.hasEnemyFigure)
 
   }
 
-  abstract clone(position: Cell): Figure
+  abstract clone(position: Square): Figure
 }

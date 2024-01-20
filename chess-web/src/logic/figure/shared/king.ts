@@ -1,8 +1,8 @@
 import { Figure } from '../figure'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { Color } from '../color'
 import { Board } from '../../board'
-import { isValidPosition } from '../../cell-util'
+import { isValidPosition } from '../../square-util'
 import { FigureType } from '../figure-type'
 
 const DIRECTIONS = [
@@ -17,25 +17,25 @@ const DIRECTIONS = [
 ]
 
 export abstract class King implements Figure {
-  abstract position: Cell
+  abstract position: Square
   abstract color: Color
   readonly type = FigureType.KING
 
-  moves(board: Board): Cell[] {
-    const moves: Cell[] = [];
+  moves(board: Board): Square[] {
+    const moves: Square[] = [];
     for (const direction of DIRECTIONS) {
       let i = this.position.i + direction[0]
       let j = this.position.j + direction[1]
 
       if (isValidPosition(i, j)) {
-        const cell = board.getCell(i, j)!
-        if (cell.isEmpty() || cell.hasEnemyFigure(this.color)) {
-          moves.push(cell);
+        const square = board.getSquare(i, j)!
+        if (square.isEmpty() || square.hasEnemyFigure(this.color)) {
+          moves.push(square);
         }
       }
     }
     return moves;
   }
 
-  abstract clone(position: Cell): Figure
+  abstract clone(position: Square): Figure
 }

@@ -1,4 +1,4 @@
-import { Cell } from '../cell'
+import { Square } from '../square'
 import { Board } from '../board'
 import { Color } from './color'
 import { FigureType } from './figure-type'
@@ -7,7 +7,7 @@ export interface Figure {
   /**
    * Current position on the board
    */
-  position: Cell
+  position: Square
 
   color: Color
 
@@ -15,13 +15,13 @@ export interface Figure {
 
   /**
    * @param board game board
-   * @return all the cells that the figure can move to
+   * @return all the squares that the figure can move to
    */
-  moves: (board: Board) => Cell[]
+  moves: (board: Board) => Square[]
 
   /**
    * @param position must be valid, another word figure can move to this position
    * @return the same figure with new position
    */
-  clone: (position: Cell) => Figure
+  clone: (position: Square) => Figure
 }

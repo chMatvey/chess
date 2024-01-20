@@ -1,6 +1,6 @@
 import { Figure } from '../figure'
 import { Color } from '../color'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { Directions, Rock } from '../shared/rock'
 
 const DIRECTIONS = {
@@ -14,11 +14,12 @@ export class RockWhite extends Rock implements Figure {
   readonly color = Color.WHITE
   protected readonly directions: Directions = DIRECTIONS
 
-  constructor(override readonly position: Cell) {
+  constructor(override readonly position: Square) {
     super()
+    position.setFigure(this)
   }
 
-  override clone(position: Cell): Figure {
+  override clone(position: Square): Figure {
     return new RockWhite(position)
   }
 }

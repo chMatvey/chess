@@ -1,8 +1,8 @@
-import { Cell } from './cell'
+import { Square } from './square'
 import { Figure } from './figure/figure'
 import { Color } from './figure/color'
-import { isValidPosition } from './cell-util'
-import { createCells, createFigures } from './board-util'
+import { isValidPosition } from './square-util'
+import { createSquares, createFigures } from './board-util'
 import { FigureType } from './figure/figure-type'
 
 /**
@@ -30,32 +30,32 @@ import { FigureType } from './figure/figure-type'
  *
  */
 export interface Board {
-  cells: Cell[][]
+  squares: Square[][]
 
   figures: Figure[]
 
   /**
-   * @return cell if indexes are valid else null
+   * @return square if indexes are valid else null
    */
-  getCell: (i: number, j: number) => Cell | null
+  getSquare: (i: number, j: number) => Square | null
 
-  kingPosition: (color: Color) => Cell
+  kingPosition: (color: Color) => Square
 }
 
-class BoardImpl implements Board {
-  cells: Cell[][]
+export class BoardImpl implements Board {
+  squares: Square[][]
   figures: Figure[]
 
   constructor() {
-    this.cells = createCells()
-    this.figures = createFigures(this.cells)
+    this.squares = createSquares()
+    this.figures = createFigures(this.squares)
   }
 
-  getCell(i: number, j: number): Cell | null {
-    return isValidPosition(i, j) ? this.cells[i][j] : null
+  getSquare(i: number, j: number): Square | null {
+    return isValidPosition(i, j) ? this.squares[i][j] : null
   }
 
-  kingPosition(color: Color): Cell {
+  kingPosition(color: Color): Square {
     return this.figures
       .filter(figure => figure.color === color)
       .find(figure => figure.type === FigureType.KING )

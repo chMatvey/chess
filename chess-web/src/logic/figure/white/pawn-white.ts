@@ -1,11 +1,11 @@
 import { Figure } from '../figure'
 import { Color } from '../color'
 import { Board } from '../../board'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { FigureType } from '../figure-type'
 
 /**
- * A2...H2 cells
+ * A2...H2 Squares
  */
 const ROW_START_INDEX = 6
 
@@ -13,11 +13,12 @@ export class PawnWhite implements Figure {
   readonly color = Color.WHITE
   readonly type = FigureType.PAWN
 
-  constructor(readonly position: Cell) {
+  constructor(readonly position: Square) {
+    position.setFigure(this)
   }
 
-  moves(board: Board): Cell[] {
-    const moves: Cell[] = []
+  moves(board: Board): Square[] {
+    const moves: Square[] = []
 
     this.moveForward(board, moves)
     this.moveDoubleForward(board, moves)
@@ -26,32 +27,32 @@ export class PawnWhite implements Figure {
     return moves
   }
 
-  clone(position: Cell): Figure {
+  clone(position: Square): Figure {
     return new PawnWhite(position)
   }
 
   /**
-   * Check if the pawn can move forward one cell
+   * Check if the pawn can move forward one Square
    */
-  private moveForward(board: Board, moves: Cell[]): void {
+  private moveForward(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const forwardCell = board.getCell(i - 1, j)
-    if (forwardCell?.isEmpty()) {
-      moves.push(forwardCell)
+    const forwardSquare = board.getSquare(i - 1, j)
+    if (forwardSquare?.isEmpty()) {
+      moves.push(forwardSquare)
     }
   }
 
   /**
-   * Check if the pawn can move forward two cells from its starting position
+   * Check if the pawn can move forward two Squares from its starting position
    */
-  private moveDoubleForward(board: Board, moves: Cell[]): void {
+  private moveDoubleForward(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
-      const doubleForwardCell = board.getCell(i - 2, j)!
-      if (doubleForwardCell.isEmpty()) {
-        moves.push(doubleForwardCell)
+      const doubleForwardSquare = board.getSquare(i - 2, j)!
+      if (doubleForwardSquare.isEmpty()) {
+        moves.push(doubleForwardSquare)
       }
     }
   }
@@ -59,17 +60,17 @@ export class PawnWhite implements Figure {
   /**
    * Check if the pawn can capture diagonally
    */
-  private captureDiagonal(board: Board, moves: Cell[]): void {
+  private captureDiagonal(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const leftDiagonalCell = board.getCell(i - 1, j - 1)!
-    if (leftDiagonalCell.hasEnemyFigure(this.color)) {
-      moves.push(leftDiagonalCell)
+    const leftDiagonalSquare = board.getSquare(i - 1, j - 1)!
+    if (leftDiagonalSquare.hasEnemyFigure(this.color)) {
+      moves.push(leftDiagonalSquare)
     }
 
-    const rightDiagonalCell = board.getCell(i - 1, j + 1)
-    if (rightDiagonalCell?.hasEnemyFigure(this.color)) {
-      moves.push(rightDiagonalCell)
+    const rightDiagonalSquare = board.getSquare(i - 1, j + 1)
+    if (rightDiagonalSquare?.hasEnemyFigure(this.color)) {
+      moves.push(rightDiagonalSquare)
     }
   }
 }

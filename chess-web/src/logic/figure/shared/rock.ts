@@ -1,5 +1,5 @@
 import { Figure } from '../figure'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { BOARD_SIZE } from '../../const'
@@ -13,14 +13,14 @@ export interface Directions {
 }
 
 export abstract class Rock implements Figure {
-  abstract position: Cell
+  abstract position: Square
   abstract color: Color
   readonly type = FigureType.ROOK
 
   protected abstract directions: Directions
 
-  moves(board: Board): Cell[] {
-    const moves: Cell[] = []
+  moves(board: Board): Square[] {
+    const moves: Square[] = []
 
     for (const direction of Object.values(this.directions)) {
       let { i, j } = this.position
@@ -28,9 +28,9 @@ export abstract class Rock implements Figure {
       while (i >= 0 && i < BOARD_SIZE) {
         i += direction[0]
         j += direction[1]
-        const cell = board.getCell(i, j)
-        if (cell?.isEmpty()) {
-          moves.push(cell)
+        const square = board.getSquare(i, j)
+        if (square?.isEmpty()) {
+          moves.push(square)
         } else {
           break
         }
@@ -40,5 +40,5 @@ export abstract class Rock implements Figure {
     return moves;
   }
 
-  abstract clone(position: Cell): Figure
+  abstract clone(position: Square): Figure
 }

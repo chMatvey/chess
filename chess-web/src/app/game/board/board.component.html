@@ -1,0 +1,12 @@
+<div class="chessboard">
+  <ng-template ngFor let-row [ngForOf]="rows">
+<!--    <div *ngFor="let square of row; index as j"-->
+<!--         [ngClass]="['square', squareColor(i, j)]">-->
+<!--      <ng-template [ngIf]="square.hasFigure()">-->
+<!--        <app-figure [figure]="square.getFigure()!"></app-figure>-->
+<!--      </ng-template>-->
+<!--    </div>-->
+    <app-square *ngFor="let square of row" [square]="square">
+    </app-square>
+  </ng-template>
+</div>

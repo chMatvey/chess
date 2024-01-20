@@ -8,7 +8,7 @@ import { Color } from './figure/color'
  *
  * board is two-dimensional array
  */
-export interface Cell {
+export interface Square {
   i: number,
   j: number,
 
@@ -16,12 +16,13 @@ export interface Cell {
   setFigure: (figure: Figure) => void
   removeFigure: () => void
 
+  hasFigure: () => boolean
   isEmpty: () => boolean
   hasEnemyFigure: (color: Color) => boolean
   isEmptyOrHasEnemyFigure: (color: Color) => boolean
 }
 
-export class CellImpl implements Cell {
+export class SquareImpl implements Square {
   private figure: Figure | null = null
 
   constructor(public i: number, public j: number) {
@@ -41,6 +42,10 @@ export class CellImpl implements Cell {
 
   hasEnemyFigure(color: Color): boolean {
     return !!this.figure && this.figure.color !== color
+  }
+
+  hasFigure(): boolean {
+    return !!this.figure
   }
 
   isEmpty(): boolean {

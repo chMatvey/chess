@@ -1,16 +1,17 @@
 import { Bishop } from '../shared/bishop'
 import { Figure } from '../figure'
 import { Color } from '../color'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 
 export class BishopWhite extends Bishop implements Figure {
   readonly color = Color.WHITE
 
-  constructor(readonly position: Cell) {
+  constructor(readonly position: Square) {
     super()
+    position.setFigure(this)
   }
 
-  override clone(position: Cell): Figure {
+  override clone(position: Square): Figure {
     return new BishopWhite(position);
   }
 }

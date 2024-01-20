@@ -1,16 +1,17 @@
 import { Figure } from '../figure'
 import { Color } from '../color'
-import { Cell } from '../../cell'
+import { Square } from '../../square'
 import { Knight } from '../shared/knight'
 
 export class KnightWhite extends Knight implements Figure {
   readonly color = Color.WHITE
 
-  constructor(readonly position: Cell) {
+  constructor(readonly position: Square) {
     super()
+    position.setFigure(this)
   }
 
-  override clone(position: Cell): Figure {
+  override clone(position: Square): Figure {
     return new KnightWhite(position)
   }
 }
