@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Board, BoardImpl } from '../../logic/board'
 import { BehaviorSubject, filter, Observable, take } from 'rxjs'
-import { BOARD_SIZE } from '../../logic/const'
 import { Square } from '../../logic/square'
 import { Figure } from '../../logic/figure/figure'
 import { UnexpectedStateError } from '../errors/unexpected-state-error'
 import { FigureType } from '../../logic/figure/figure-type'
 import { Pawn } from '../../logic/figure/shared/pawn'
 import { PawnPromotionService } from './pawn-promotion.service'
+import { createMovesSubjects } from './game'
 
 @Injectable({
   providedIn: 'root'
@@ -16,17 +16,16 @@ export class GameService {
   private gameBoard: Board = new BoardImpl()
 
   /**
-   * Even displaying possible moves of the selected figures
+   * Events of displaying possible moves of the selected figure
    */
-  private moveSubjects: BehaviorSubject<boolean>[][] = []
+  private movesSubjects: BehaviorSubject<boolean>[][] = createMovesSubjects()
 
   /**
    * Figure for which displayed available moves
    */
-  private figureForWhichMoveDisplayed: Figure | null = null
+  private figureForWhichMovesDisplayed: Figure | null = null
 
   constructor(private pawnPromotionService: PawnPromotionService) {
-    this.initSquareSubjects()
   }
 
   get board(): Board {
@@ -34,29 +33,29 @@ export class GameService {
   }
 
   moveDisplay$(i: number, j: number): Observable<boolean> {
-    return this.moveSubjects[i][j].asObservable()
+    return this.movesSubjects[i][j].asObservable()
   }
 
   showOrHideMoves(figure: Figure): void {
-    if (figure == this.figureForWhichMoveDisplayed) {
+    if (figure == this.figureForWhichMovesDisplayed) {
       // 1. Move already displayed for this figure -> hide moves and return
       this.hideMoves()
       return
-    } else if (this.figureForWhichMoveDisplayed !== null) {
+    } else if (this.figureForWhichMovesDisplayed !== null) {
       // 1. Move displayed for another figure -> hide moves and continue
       this.hideMoves()
     }
 
     // 2. Display moves for this Figure
-    this.figureForWhichMoveDisplayed = figure
+    this.figureForWhichMovesDisplayed = figure
     for (const move of figure.moves(this.board)) {
       const { i, j } = move
-      this.moveSubjects[i][j].next(true)
+      this.movesSubjects[i][j].next(true)
     }
   }
 
   makeMove(move: Square): void {
-    let figure = this.figureForWhichMoveDisplayed!
+    let figure = this.figureForWhichMovesDisplayed!
     this.hideMoves()
 
     if (move.hasFriendFigure(figure.color)) {
@@ -80,22 +79,12 @@ export class GameService {
     move.setFigure(figure.clone(move))
   }
 
-  private initSquareSubjects() {
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      const row: BehaviorSubject<boolean>[] = []
-      for (let j = 0; j < BOARD_SIZE; j++) {
-        row.push(new BehaviorSubject<boolean>(false))
-      }
-      this.moveSubjects.push(row)
-    }
-  }
-
   private hideMoves(): void {
-    for (const move of this.figureForWhichMoveDisplayed!.moves(this.board)) {
+    for (const move of this.figureForWhichMovesDisplayed!.moves(this.board)) {
       const { i, j } = move
-      this.moveSubjects[i][j].next(false)
+      this.movesSubjects[i][j].next(false)
     }
-    this.figureForWhichMoveDisplayed = null
+    this.figureForWhichMovesDisplayed = null
   }
 
   private promotePawn(pawn: Pawn, move: Square) {

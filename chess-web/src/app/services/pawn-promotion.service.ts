@@ -2,10 +2,15 @@ import { Injectable } from '@angular/core';
 import { Pawn } from '../../logic/figure/shared/pawn'
 import { Figure } from '../../logic/figure/figure'
 import { Observable, Subject } from 'rxjs'
-import { Square, SquareImpl } from '../../logic/square'
+import { Square } from '../../logic/square'
 import { PawnPromotion } from '../models'
-import { Color } from '../../logic/figure/color'
 
+/**
+ * Pawn promotion occurs when a pawn reaches the farthest rank from its original square.
+ *
+ * When this happens, the player can replace the pawn for a queen, a rook, a bishop, or a knight.
+ *
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -29,12 +34,5 @@ export class PawnPromotionService {
   replace(figure: Figure | null): void {
     this.replacedSubject.next(figure)
     this.promotionSubject.next(null)
-  }
-
-  test(): void {
-    this.promotionSubject.next({
-      color: Color.WHITE,
-      move: new SquareImpl(0,0)
-    })
   }
 }
