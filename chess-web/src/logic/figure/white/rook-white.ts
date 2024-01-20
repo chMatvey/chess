@@ -1,17 +1,17 @@
 import { Figure } from '../figure'
 import { Color } from '../color'
 import { Square } from '../../square'
-import { Rock } from '../shared/rock'
+import { Rook } from '../shared/rook'
 
-export class RockBlack extends Rock implements Figure {
-  readonly color = Color.BLACK
+export class RookWhite extends Rook implements Figure {
+  readonly color = Color.WHITE
 
   constructor(override readonly position: Square) {
     super()
     position.setFigure(this)
   }
 
-  override clone(position: Square) {
-    return new RockBlack(position)
+  override clone(position: Square): Figure {
+    return new RookWhite(position)
   }
 }

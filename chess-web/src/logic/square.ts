@@ -12,14 +12,15 @@ export interface Square {
   i: number,
   j: number,
 
-  getFigure: () => Figure | null
-  setFigure: (figure: Figure) => void
-  removeFigure: () => void
+  getFigure(): Figure | null
+  setFigure(figure: Figure): void
+  removeFigure(): void
 
-  hasFigure: () => boolean
-  isEmpty: () => boolean
-  hasEnemyFigure: (color: Color) => boolean
-  isEmptyOrHasEnemyFigure: (color: Color) => boolean
+  hasFigure(): boolean
+  isEmpty(): boolean
+  hasEnemyFigure(color: Color): boolean
+  hasFriendFigure(color: Color): boolean
+  isEmptyOrHasEnemyFigure(color: Color): boolean
 }
 
 export class SquareImpl implements Square {
@@ -42,6 +43,10 @@ export class SquareImpl implements Square {
 
   hasEnemyFigure(color: Color): boolean {
     return !!this.figure && this.figure.color !== color
+  }
+
+  hasFriendFigure(color: Color): boolean {
+    return !!this.figure && this.figure.color === color
   }
 
   hasFigure(): boolean {

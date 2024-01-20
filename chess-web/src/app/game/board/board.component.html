@@ -14,3 +14,7 @@
     <app-square *ngFor="let square of row" [square]="square"></app-square>
   </ng-template>
 </div>
+
+<app-pawn-promotion *ngIf="pawnPromotion$ | async as promotion"
+                    [promotion]="promotion"
+                    (figureToReplace)="onPawnReplace($event)"></app-pawn-promotion>

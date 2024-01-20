@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Board, BoardImpl } from '../../logic/board'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { BehaviorSubject, filter, Observable, take } from 'rxjs'
 import { BOARD_SIZE } from '../../logic/const'
 import { Square } from '../../logic/square'
 import { Figure } from '../../logic/figure/figure'
 import { UnexpectedStateError } from '../errors/unexpected-state-error'
 import { FigureType } from '../../logic/figure/figure-type'
 import { Pawn } from '../../logic/figure/shared/pawn'
+import { PawnPromotionService } from './pawn-promotion.service'
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +23,9 @@ export class GameService {
   /**
    * Figure for which displayed available moves
    */
-  private figureForWhichDisplayed: Figure | null = null
+  private figureForWhichMoveDisplayed: Figure | null = null
 
-  constructor() {
+  constructor(private pawnPromotionService: PawnPromotionService) {
     this.initSquareSubjects()
   }
 
@@ -37,17 +38,17 @@ export class GameService {
   }
 
   showOrHideMoves(figure: Figure): void {
-    if (figure == this.figureForWhichDisplayed) {
+    if (figure == this.figureForWhichMoveDisplayed) {
       // 1. Move already displayed for this figure -> hide moves and return
       this.hideMoves()
       return
-    } else if (this.figureForWhichDisplayed !== null) {
+    } else if (this.figureForWhichMoveDisplayed !== null) {
       // 1. Move displayed for another figure -> hide moves and continue
       this.hideMoves()
     }
 
     // 2. Display moves for this Figure
-    this.figureForWhichDisplayed = figure
+    this.figureForWhichMoveDisplayed = figure
     for (const move of figure.moves(this.board)) {
       const { i, j } = move
       this.moveSubjects[i][j].next(true)
@@ -55,26 +56,28 @@ export class GameService {
   }
 
   makeMove(move: Square): void {
-    let figure = this.figureForWhichDisplayed!
+    let figure = this.figureForWhichMoveDisplayed!
     this.hideMoves()
-    figure.position.removeFigure()
 
-    if (move.hasEnemyFigure(figure.color)) {
-      // Capture
-      this.board.removeFigure(move.getFigure()!)
-      move.removeFigure()
-      move.setFigure(figure.clone(move))
-    } else if (move.isEmpty()) {
-      // Move
-      move.setFigure(figure.clone(move))
-    } else {
+    if (move.hasFriendFigure(figure.color)) {
       throw new UnexpectedStateError()
     }
 
-    figure = move.getFigure()!
     if (figure.type === FigureType.PAWN) {
-      this.checkPawnCanBeUpgraded(<Pawn> figure)
+      const pawn = <Pawn> figure
+      if (pawn.canPromote(move)) {
+        this.promotePawn(pawn, move)
+        return
+      }
     }
+
+    figure.position.removeFigure()
+
+    if (move.hasEnemyFigure(figure.color)) {
+      this.board.removeFigure(move.getFigure()!)
+    }
+
+    move.setFigure(figure.clone(move))
   }
 
   private initSquareSubjects() {
@@ -88,16 +91,31 @@ export class GameService {
   }
 
   private hideMoves(): void {
-    for (const move of this.figureForWhichDisplayed!.moves(this.board)) {
+    for (const move of this.figureForWhichMoveDisplayed!.moves(this.board)) {
       const { i, j } = move
       this.moveSubjects[i][j].next(false)
     }
-    this.figureForWhichDisplayed = null
+    this.figureForWhichMoveDisplayed = null
   }
 
-  private checkPawnCanBeUpgraded(pawn: Pawn): void {
-    if (pawn.canUpgrade()) {
+  private promotePawn(pawn: Pawn, move: Square) {
+    this.pawnPromotionService.promote(pawn, move)
+      .pipe(
+        take(1),
+        filter(pawn => pawn != null)
+      )
+      .subscribe(figure =>
+        this.replacePawn(pawn, move, figure!)
+      )
+  }
 
+  private replacePawn(pawn: Pawn, move: Square, figure: Figure): void {
+    if (move.hasEnemyFigure(pawn.color)) {
+      this.board.removeFigure(move.getFigure()!)
     }
+
+    this.board.replaceFigure(pawn, figure)
+    pawn.position.removeFigure()
+    move.setFigure(figure)
   }
 }

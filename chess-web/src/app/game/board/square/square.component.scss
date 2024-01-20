@@ -1,40 +1,37 @@
-/* Style for each square */
 .square {
   width: 70px;
   height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  .figure-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .move-circle {
+    width: 23px;
+    height: 23px;
+    background-color: rgba(128, 128, 128, 0.5);
+    border-radius: 50%;
+  }
+
+  .move-capture {
+    position: absolute;
+    width: 49px;
+    height: 49px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 8px solid rgba(128, 128, 128, 0.5);
+  }
 }
 
-/* Different colors for the squares */
 .white-square {
   background-color: #f0d9b5;
 }
 
 .black-square {
   background-color: #b58863;
-}
-
-.figure-icon {
-  font-size: 16px;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-}
-
-.move-circle {
-  width: 23px;
-  height: 23px;
-  background-color: rgba(128, 128, 128, 0.5);
-  border-radius: 50%;
-}
-
-.move-capture {
-  position: absolute;
-  width: 49px;
-  height: 49px;
-  border-radius: 50%;
-  background-color: transparent;
-  border: 8px solid rgba(128, 128, 128, 0.5);
 }

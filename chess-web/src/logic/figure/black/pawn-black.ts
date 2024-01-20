@@ -29,8 +29,8 @@ export class PawnBlack extends Pawn implements Figure {
     return new PawnBlack(position)
   }
 
-  override canUpgrade(): boolean {
-    return this.position.i === ROW_END_INDEX
+  override canPromote(move: Square): boolean {
+    return move.i === ROW_END_INDEX
   }
 
   /**

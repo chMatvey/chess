@@ -12,7 +12,7 @@ const DIRECTIONS = [
   [0, -1]
 ]
 
-export abstract class Rock implements Figure {
+export abstract class Rook implements Figure {
   abstract position: Square
   abstract color: Color
   readonly type = FigureType.ROOK

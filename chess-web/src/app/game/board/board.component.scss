@@ -2,21 +2,21 @@
   display: grid;
   grid-template-columns: 20px repeat(8, 70px);
   grid-template-rows: 20px repeat(8, 70px);
-  width: 560px;
-  height: 560px;
-}
+  width: 580px;
+  height: 580px;
 
-.label {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-}
+  .label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+  }
 
-.top-label {
-  grid-row: 1;
-}
+  .top-label {
+    grid-row: 1;
+  }
 
-.side-label {
-  grid-column: 1;
+  .side-label {
+    grid-column: 1;
+  }
 }

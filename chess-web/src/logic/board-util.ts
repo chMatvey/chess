@@ -1,13 +1,13 @@
 import { Square, SquareImpl } from './square'
 import { BOARD_SIZE } from './const'
 import { Figure } from './figure/figure'
-import { RockWhite } from './figure/white/rock-white'
+import { RookWhite } from './figure/white/rook-white'
 import { KnightWhite } from './figure/white/knight-white'
 import { BishopWhite } from './figure/white/bishop-white'
 import { QueenWhite } from './figure/white/queen-white'
 import { KingWhite } from './figure/white/king-white'
 import { PawnWhite } from './figure/white/pawn-white'
-import { RockBlack } from './figure/black/rock-black'
+import { RookBlack } from './figure/black/rook-black'
 import { KnightBlack } from './figure/black/knight-black'
 import { BishopBlack } from './figure/black/bishop-black'
 import { QueenBlack } from './figure/black/queen-black'
@@ -37,14 +37,14 @@ export function createFigures(squares: Square[][]): Figure[] {
 
 function createWhiteFigures(squares: Square[][], figures: Figure[]) {
   figures.push(
-    new RockWhite(squares[7][0]),
+    new RookWhite(squares[7][0]),
     new KnightWhite(squares[7][1]),
     new BishopWhite(squares[7][2]),
     new QueenWhite(squares[7][3]),
     new KingWhite(squares[7][4]),
     new BishopWhite(squares[7][5]),
     new KnightWhite(squares[7][6]),
-    new RockWhite(squares[7][7])
+    new RookWhite(squares[7][7])
   )
 
   for (let j = 0; j < BOARD_SIZE; j++)
@@ -53,14 +53,14 @@ function createWhiteFigures(squares: Square[][], figures: Figure[]) {
 
 function createBlackFigures(squares: Square[][], figures: Figure[]) {
   figures.push(
-    new RockBlack(squares[0][0]),
+    new RookBlack(squares[0][0]),
     new KnightBlack(squares[0][1]),
     new BishopBlack(squares[0][2]),
     new QueenBlack(squares[0][3]),
     new KingBlack(squares[0][4]),
     new BishopBlack(squares[0][5]),
     new KnightBlack(squares[0][6]),
-    new RockBlack(squares[0][7])
+    new RookBlack(squares[0][7])
   )
 
   for (let j = 0; j < BOARD_SIZE; j++) {

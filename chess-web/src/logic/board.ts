@@ -37,11 +37,13 @@ export interface Board {
   /**
    * @return square if indexes are valid else null
    */
-  getSquare: (i: number, j: number) => Square | null
+  getSquare(i: number, j: number): Square | null
 
-  kingPosition: (color: Color) => Square
+  kingPosition(color: Color): Square
 
   removeFigure(figure: Figure): void
+
+  replaceFigure(replaced: Figure, toReplace: Figure): void
 }
 
 export class BoardImpl implements Board {
@@ -66,5 +68,10 @@ export class BoardImpl implements Board {
 
   removeFigure(toRemove: Figure): void {
     this.figures = this.figures.filter(figure => figure !== toRemove)
+  }
+
+  replaceFigure(replaced: Figure, toReplace: Figure): void {
+    this.figures.push(toReplace)
+    this.removeFigure(replaced)
   }
 }

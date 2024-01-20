@@ -13,7 +13,8 @@ export abstract class Pawn implements Figure {
   abstract clone(position: Square): Figure
 
   /**
-   * Is pawn reached the end of the board and it can be replaced to higher figure
+   * Is pawn reached the end of the board,
+   * and it can be replaced to higher figure
    */
-  abstract canUpgrade(): boolean
+  abstract canPromote(move: Square): boolean
 }
