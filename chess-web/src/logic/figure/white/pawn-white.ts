@@ -50,8 +50,9 @@ export class PawnWhite implements Figure {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
+      const forwardSquare = board.getSquare(i - 1, j)!
       const doubleForwardSquare = board.getSquare(i - 2, j)!
-      if (doubleForwardSquare.isEmpty()) {
+      if (forwardSquare.isEmpty() && doubleForwardSquare.isEmpty()) {
         moves.push(doubleForwardSquare)
       }
     }
@@ -63,8 +64,8 @@ export class PawnWhite implements Figure {
   private captureDiagonal(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const leftDiagonalSquare = board.getSquare(i - 1, j - 1)!
-    if (leftDiagonalSquare.hasEnemyFigure(this.color)) {
+    const leftDiagonalSquare = board.getSquare(i - 1, j - 1)
+    if (leftDiagonalSquare?.hasEnemyFigure(this.color)) {
       moves.push(leftDiagonalSquare)
     }
 

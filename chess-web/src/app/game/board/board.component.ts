@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Board, BoardImpl } from '../../../logic/board'
 import { CommonModule, NgForOf } from '@angular/common'
 import { Square } from '../../../logic/square'
 import { SquareComponent } from './square/square.component'
+import { GameService } from '../../services/game.service'
 
 @Component({
   selector: 'app-board',
@@ -16,9 +16,15 @@ import { SquareComponent } from './square/square.component'
   styleUrl: './board.component.scss'
 })
 export class BoardComponent {
-  private board: Board = new BoardImpl()
+  constructor(private gameService: GameService) {
+  }
 
   get rows(): Square[][] {
-    return this.board.squares
+    return this.gameService.board.squares
+  }
+
+  get squares(): Square[] {
+    return this.gameService.board.squares
+      .flatMap(squares => squares)
   }
 }

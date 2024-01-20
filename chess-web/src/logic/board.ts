@@ -40,6 +40,8 @@ export interface Board {
   getSquare: (i: number, j: number) => Square | null
 
   kingPosition: (color: Color) => Square
+
+  removeFigure(figure: Figure): void
 }
 
 export class BoardImpl implements Board {
@@ -60,5 +62,9 @@ export class BoardImpl implements Board {
       .filter(figure => figure.color === color)
       .find(figure => figure.type === FigureType.KING )
       ?.position!
+  }
+
+  removeFigure(toRemove: Figure): void {
+    this.figures = this.figures.filter(figure => figure !== toRemove)
   }
 }

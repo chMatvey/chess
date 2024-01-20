@@ -34,8 +34,8 @@ export class PawnBlack implements Figure {
   private moveForward(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const forwardSquare = board.getSquare(i + 1, j)!
-    if (forwardSquare.isEmpty()) {
+    const forwardSquare = board.getSquare(i + 1, j)
+    if (forwardSquare?.isEmpty()) {
       moves.push(forwardSquare)
     }
   }
@@ -47,8 +47,9 @@ export class PawnBlack implements Figure {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
+      const forwardSquare = board.getSquare(i + 1, j)!
       const doubleForwardSquare = board.getSquare(i + 2, j)!
-      if (doubleForwardSquare.isEmpty()) {
+      if (forwardSquare.isEmpty() && doubleForwardSquare.isEmpty()) {
         moves.push(doubleForwardSquare)
       }
     }
@@ -65,7 +66,7 @@ export class PawnBlack implements Figure {
       moves.push(leftDiagonalSquare)
     }
 
-    const rightDiagonalSquare = board.getSquare(i + 1, i + 1)
+    const rightDiagonalSquare = board.getSquare(i + 1, j + 1)
     if (rightDiagonalSquare?.hasEnemyFigure(this.color)) {
       moves.push(rightDiagonalSquare)
     }

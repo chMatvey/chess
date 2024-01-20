@@ -1,3 +1,12 @@
-<div [ngClass]="['square', squareColor]">
-  <img *ngIf="hasFigure" class="figure-icon" [src]="src" [alt]="alt">
+<div [ngClass]="['square', squareColor]" (click)="handleClick()">
+  <img *ngIf="square.hasFigure()"
+       class="figure-icon"
+       [src]="src" [alt]="figure.type">
+
+  <ng-template [ngIf]="displayMovesSubject | async">
+    <div *ngIf="square.isEmpty(); else captureBlock" class="move-circle"></div>
+    <ng-template #captureBlock>
+      <div class="move-capture"></div>
+    </ng-template>
+  </ng-template>
 </div>

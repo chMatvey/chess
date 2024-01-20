@@ -27,8 +27,7 @@ export abstract class Knight implements Figure {
       .map(directions => board.getSquare(i + directions[0], j + directions[1]))
       .filter(square => square != null)
       .map(square => square!)
-      .filter(square => square.hasEnemyFigure)
-
+      .filter(square => square.isEmpty() || square.hasEnemyFigure(this.color))
   }
 
   abstract clone(position: Square): Figure
