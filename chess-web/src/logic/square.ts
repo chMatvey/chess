@@ -16,15 +16,18 @@ export interface Square {
   setFigure(figure: Figure): void
   removeFigure(): void
 
-  hasFigure(): boolean
   isEmpty(): boolean
+  hasFigure(): boolean
   hasEnemyFigure(color: Color): boolean
   hasFriendFigure(color: Color): boolean
-  isEmptyOrHasEnemyFigure(color: Color): boolean
+
+  markEmpty(): void
+  unmarkEmpty(): void
 }
 
 export class SquareImpl implements Square {
   private figure: Figure | null = null
+  private markedEmpty: boolean = false
 
   constructor(public i: number, public j: number) {
   }
@@ -41,23 +44,31 @@ export class SquareImpl implements Square {
     this.figure = null
   }
 
+  isEmpty(): boolean {
+    return this.markedEmpty || !this.figure
+  }
+
   hasEnemyFigure(color: Color): boolean {
-    return !!this.figure && this.figure.color !== color
+    if (this.isEmpty())
+      return false
+    return this.figure!.color !== color
   }
 
   hasFriendFigure(color: Color): boolean {
-    return !!this.figure && this.figure.color === color
+    if (this.isEmpty())
+      return false
+    return this.figure!.color === color
   }
 
   hasFigure(): boolean {
-    return !!this.figure
+    return !this.isEmpty()
   }
 
-  isEmpty(): boolean {
-    return !this.figure
+  markEmpty() {
+    this.markedEmpty = true
   }
 
-  isEmptyOrHasEnemyFigure(color: Color): boolean {
-    return this.isEmpty() || this.hasEnemyFigure(color)
+  unmarkEmpty() {
+    this.markedEmpty = false
   }
 }

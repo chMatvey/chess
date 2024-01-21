@@ -3,9 +3,6 @@ import { Board, BoardImpl } from '../../logic/board'
 import { BehaviorSubject, filter, Observable, take } from 'rxjs'
 import { Square } from '../../logic/square'
 import { Figure } from '../../logic/figure/figure'
-import { UnexpectedStateError } from '../errors/unexpected-state-error'
-import { FigureType } from '../../logic/figure/figure-type'
-import { Pawn } from '../../logic/figure/shared/pawn'
 import { PawnPromotionService } from './pawn-promotion.service'
 import { createMovesSubjects } from './game'
 
@@ -48,7 +45,7 @@ export class GameService {
 
     // 2. Display moves for this Figure
     this.figureForWhichMovesDisplayed = figure
-    for (const move of figure.moves(this.board)) {
+    for (const move of this.board.getFigureMoves(figure)) {
       const { i, j } = move
       this.movesSubjects[i][j].next(true)
     }
@@ -58,53 +55,30 @@ export class GameService {
     let figure = this.figureForWhichMovesDisplayed!
     this.hideMoves()
 
-    if (move.hasFriendFigure(figure.color)) {
-      throw new UnexpectedStateError()
+    if (this.board.canPromotePawn(move, figure)) {
+      this.promotePawn(move, figure)
+    } else {
+      this.board.makeMove(move, figure)
     }
-
-    if (figure.type === FigureType.PAWN) {
-      const pawn = <Pawn> figure
-      if (pawn.canPromote(move)) {
-        this.promotePawn(pawn, move)
-        return
-      }
-    }
-
-    figure.position.removeFigure()
-
-    if (move.hasEnemyFigure(figure.color)) {
-      this.board.removeFigure(move.getFigure()!)
-    }
-
-    move.setFigure(figure.clone(move))
   }
 
   private hideMoves(): void {
-    for (const move of this.figureForWhichMovesDisplayed!.moves(this.board)) {
+    const moves = this.board.getFigureMoves(this.figureForWhichMovesDisplayed!)
+    for (const move of moves) {
       const { i, j } = move
       this.movesSubjects[i][j].next(false)
     }
     this.figureForWhichMovesDisplayed = null
   }
 
-  private promotePawn(pawn: Pawn, move: Square) {
-    this.pawnPromotionService.promote(pawn, move)
+  private promotePawn(move: Square, pawn: Figure) {
+    this.pawnPromotionService.promote(move, pawn)
       .pipe(
         take(1),
-        filter(pawn => pawn != null)
+        filter(pawn => pawn !== null)
       )
       .subscribe(figure =>
-        this.replacePawn(pawn, move, figure!)
+        this.board.replacePawn(move, pawn, figure!)
       )
-  }
-
-  private replacePawn(pawn: Pawn, move: Square, figure: Figure): void {
-    if (move.hasEnemyFigure(pawn.color)) {
-      this.board.removeFigure(move.getFigure()!)
-    }
-
-    this.board.replaceFigure(pawn, figure)
-    pawn.position.removeFigure()
-    move.setFigure(figure)
   }
 }

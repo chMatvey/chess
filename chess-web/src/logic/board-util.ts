@@ -13,6 +13,8 @@ import { BishopBlack } from './figure/black/bishop-black'
 import { QueenBlack } from './figure/black/queen-black'
 import { KingBlack } from './figure/black/king-black'
 import { PawnBlack } from './figure/black/pawn-black'
+import { Color } from './figure/color'
+import { FigureType } from './figure/figure-type'
 
 export function createSquares(): Square[][] {
   const squares: Square[][] = []
@@ -66,4 +68,9 @@ function createBlackFigures(squares: Square[][], figures: Figure[]) {
   for (let j = 0; j < BOARD_SIZE; j++) {
     figures.push(new PawnBlack(squares[1][j]))
   }
+}
+
+export function findKing(figures: Figure[], color: Color): Figure {
+  return  figures
+    .find(figure => figure.color === color && figure.type === FigureType.KING)!
 }

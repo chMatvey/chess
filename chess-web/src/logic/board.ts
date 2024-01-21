@@ -2,8 +2,10 @@ import { Square } from './square'
 import { Figure } from './figure/figure'
 import { Color } from './figure/color'
 import { isValidPosition } from './square-util'
-import { createSquares, createFigures } from './board-util'
+import { createFigures, createSquares, findKing } from './board-util'
+import { UnexpectedStateError } from '../app/errors/unexpected-state-error'
 import { FigureType } from './figure/figure-type'
+import { Pawn } from './figure/shared/pawn'
 
 /**
  * Board is two-dimensional array 8x8 (8 rows and cols)
@@ -32,46 +34,117 @@ import { FigureType } from './figure/figure-type'
 export interface Board {
   squares: Square[][]
 
-  figures: Figure[]
-
   /**
    * @return square if indexes are valid else null
    */
   getSquare(i: number, j: number): Square | null
 
-  kingPosition(color: Color): Square
+  getFigureMoves(figure: Figure): Square[]
 
-  removeFigure(figure: Figure): void
+  makeMove(move: Square, figure: Figure): void
 
-  replaceFigure(replaced: Figure, toReplace: Figure): void
+  canPromotePawn(move: Square, figure: Figure): boolean
+
+  replacePawn(move: Square, pawn: Figure, toReplace: Figure): void
+
+  /**
+   * Return true if figure can attack enemy King
+   */
+  isCheck(figure: Figure): boolean
+
+  // todo is check and mate
 }
 
 export class BoardImpl implements Board {
-  squares: Square[][]
-  figures: Figure[]
+  readonly squares: Square[][]
+
+  private figures: Figure[]
+  private readonly kingWhite: Figure
+  private readonly kingBlack: Figure
+
+  private moveNumber = 0
 
   constructor() {
     this.squares = createSquares()
     this.figures = createFigures(this.squares)
+    this.kingWhite = findKing(this.figures, Color.WHITE)
+    this.kingBlack = findKing(this.figures, Color.BLACK)
   }
 
   getSquare(i: number, j: number): Square | null {
     return isValidPosition(i, j) ? this.squares[i][j] : null
   }
 
-  kingPosition(color: Color): Square {
-    return this.figures
-      .filter(figure => figure.color === color)
-      .find(figure => figure.type === FigureType.KING )
-      ?.position!
+  getFigureMoves(figure: Figure): Square[] {
+    return this.isYourMove(figure.color) ? figure.moves(this) : []
+    // todo check can enemy attack king if figure move
   }
 
-  removeFigure(toRemove: Figure): void {
+  makeMove(move: Square, figure: Figure) {
+    if (move.hasFriendFigure(figure.color)) {
+      throw new UnexpectedStateError()
+    }
+
+    figure.position.removeFigure()
+    if (move.hasEnemyFigure(figure.color)) {
+      this.removeFigure(move.getFigure()!)
+    }
+    move.setFigure(figure.clone(move))
+
+    this.moveNumber++
+  }
+
+  canPromotePawn(move: Square, figure: Figure): boolean {
+    if (figure.type === FigureType.PAWN) {
+      const pawn = <Pawn> figure
+      if (pawn.canPromote(move)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  replacePawn(move: Square, pawn: Figure, toReplace: Figure): void {
+    if (move.hasEnemyFigure(pawn.color)) {
+      this.removeFigure(move.getFigure()!)
+    }
+    this.replaceFigure(pawn, toReplace)
+    pawn.position.removeFigure()
+    move.setFigure(toReplace)
+
+    this.moveNumber++
+  }
+
+  isCheck(figure: Figure): boolean {
+    const enemyKingSquare = this.getEnemyKing(figure.color).position
+    return figure.moves(this)
+      .findIndex(square => square === enemyKingSquare) !== -1
+  }
+
+  private removeFigure(toRemove: Figure): void {
     this.figures = this.figures.filter(figure => figure !== toRemove)
   }
 
-  replaceFigure(replaced: Figure, toReplace: Figure): void {
+  private replaceFigure(replaced: Figure, toReplace: Figure): void {
     this.figures.push(toReplace)
     this.removeFigure(replaced)
+  }
+
+  /**
+   * Check is white or is black move ?
+   */
+  private isYourMove(color: Color) {
+    return color === Color.WHITE ?
+      this.moveNumber % 2 === 0 :
+      this.moveNumber % 2 === 1
+  }
+
+  private getEnemyKing(color: Color): Figure {
+    return color === Color.WHITE ? this.kingBlack : this.kingWhite
+  }
+
+  private getFriendKing(color: Color): Figure {
+    return color === Color.WHITE ? this.kingWhite : this.kingBlack
   }
 }

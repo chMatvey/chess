@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Pawn } from '../../logic/figure/shared/pawn'
 import { Figure } from '../../logic/figure/figure'
 import { Observable, Subject } from 'rxjs'
 import { Square } from '../../logic/square'
@@ -25,7 +24,7 @@ export class PawnPromotionService {
     return this.promotionSubject.asObservable()
   }
 
-  promote(pawn: Pawn, move: Square): Observable<Figure | null> {
+  promote(move: Square, pawn: Figure): Observable<Figure | null> {
     const {color} = pawn
     this.promotionSubject.next({color, move})
     return this.replacedSubject.asObservable()
