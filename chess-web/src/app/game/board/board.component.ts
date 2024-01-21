@@ -41,7 +41,7 @@ export class BoardComponent implements OnInit {
     this.pawnPromotion$ = this.pawnPromotionService.promotion$
   }
 
-  onPawnReplace(figure: Figure | null): void {
-    this.pawnPromotionService.replace(figure)
+  onPawnReplace(factory: ((move: Square) => Figure) | null): void {
+    this.pawnPromotionService.replace(factory)
   }
 }

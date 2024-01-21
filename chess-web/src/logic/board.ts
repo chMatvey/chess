@@ -7,6 +7,7 @@ import { UnexpectedStateError } from '../app/errors/unexpected-state-error'
 import { FigureType } from './figure/figure-type'
 import { Pawn } from './figure/shared/pawn'
 import { Rook } from './figure/shared/rook'
+import { MoveLog } from './move-log'
 
 /**
  * Board is two-dimensional array 8x8 (8 rows and cols)
@@ -42,11 +43,11 @@ export interface Board {
 
   getFigureMoves(figure: Figure): Square[]
 
-  makeMove(move: Square, figure: Figure): void
+  makeMove(move: Square, figure: Figure): MoveLog
 
   canPromotePawn(move: Square, figure: Figure): boolean
 
-  replacePawn(move: Square, pawn: Figure, toReplace: Figure): void
+  replacePawn(move: Square, pawn: Figure, factory: (move: Square) => Figure): MoveLog
 
   rooksForCastle(color: Color): Rook[]
 
@@ -79,23 +80,28 @@ export class BoardImpl implements Board {
 
   getFigureMoves(figure: Figure): Square[] {
     return this.isYourMove(figure.color) ? figure.moves(this) : []
-    // todo check can enemy attack king if figure move
+    // todo check can enemy attack king if figure move-log.ts
   }
 
-  makeMove(move: Square, figure: Figure) {
+  makeMove(move: Square, figure: Figure): MoveLog {
     if (move.hasFriendFigure(figure.color)) {
       throw new UnexpectedStateError()
     }
 
     if (this.isCastle(move, figure)) {
-      this.makeCastle(move, figure)
-      return;
+      return this.makeCastle(move, figure)
     }
 
+    const captured = move.hasEnemyFigure(figure.color)
     figure.position.removeFigure()
-    move.setFigure(figure.clone(move))
-
+    figure.clone(move)
     this.moveNumber++
+
+    return {
+      position: move.positionAsString(),
+      figure: figure.type,
+      captured
+    }
   }
 
   canPromotePawn(move: Square, figure: Figure): boolean {
@@ -109,11 +115,19 @@ export class BoardImpl implements Board {
     return false
   }
 
-  replacePawn(move: Square, pawn: Figure, toReplace: Figure): void {
+  replacePawn(move: Square, pawn: Figure, factory: (move: Square) => Figure): MoveLog {
+    const captured = move.hasEnemyFigure(pawn.color)
+    const toReplace = factory(move)
     pawn.position.removeFigure()
-    move.setFigure(toReplace)
 
     this.moveNumber++
+
+    return {
+      position: move.positionAsString(),
+      figure: pawn.type,
+      captured,
+      replaced: toReplace.type
+    }
   }
 
   rooksForCastle(color: Color): Rook[] {
@@ -137,7 +151,7 @@ export class BoardImpl implements Board {
   }
 
   /**
-   * Check is white or is black move ?
+   * Check is white or is black move-log.ts ?
    */
   private isYourMove(color: Color) {
     return color === Color.WHITE ?
@@ -160,7 +174,7 @@ export class BoardImpl implements Board {
     return false
   }
 
-  private makeCastle(move: Square, king: Figure) {
+  private makeCastle(move: Square, king: Figure): MoveLog {
     const isLeftCastle = move.j - king.position.j < 0
     const row = king.color === Color.WHITE ? 7 : 0
 
@@ -170,24 +184,22 @@ export class BoardImpl implements Board {
       king.position.removeFigure()
       leftRook.position.removeFigure()
 
-      const kingPosition = this.squares[row][2]
-      const rookPosition = this.squares[row][3]
-
-      kingPosition.setFigure(king.clone(kingPosition));
-      rookPosition.setFigure(leftRook.clone(rookPosition));
+      king.clone(this.squares[row][2])
+      leftRook.clone(this.squares[row][3])
     } else {
       const rightRook = <Rook> this.squares[row][7].getFigure()!
 
       king.position.removeFigure()
       rightRook.position.removeFigure()
 
-      const rookPosition = this.squares[row][5]
-      const kingPosition = this.squares[row][6]
-
-      rookPosition.setFigure(rightRook.clone(rookPosition));
-      kingPosition.setFigure(king.clone(kingPosition));
+      rightRook.clone(this.squares[row][5])
+      king.clone(this.squares[row][6])
     }
 
     this.moveNumber++
+
+    return {
+      castle: true
+    }
   }
 }

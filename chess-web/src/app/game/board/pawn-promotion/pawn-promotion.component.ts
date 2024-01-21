@@ -4,6 +4,7 @@ import { getFactory, PawnReplaceFactory } from './pawn-promotion'
 import { Figure } from '../../../../logic/figure/figure'
 import { PawnPromotion } from '../../../models/pawn-promotion'
 import { NgForOf, NgIf } from '@angular/common'
+import { Square } from '../../../../logic/square'
 
 @Component({
   selector: 'app-pawn-promotion',
@@ -20,7 +21,7 @@ export class PawnPromotionComponent implements OnInit {
   promotion!: PawnPromotion
 
   @Output()
-  figureToReplace = new EventEmitter<Figure | null>
+  onReplace = new EventEmitter<((move: Square) => Figure) | null>
 
   pawnReplaceFactory!: PawnReplaceFactory
 
@@ -40,10 +41,10 @@ export class PawnPromotionComponent implements OnInit {
   }
 
   select(type: FigureType): void {
-    this.figureToReplace.emit(this.pawnReplaceFactory.create(type, this.promotion.move))
+    this.onReplace.emit((move) => this.pawnReplaceFactory.create(type, move))
   }
 
   cancel(): void {
-    this.figureToReplace.emit(null)
+    this.onReplace.emit(null)
   }
 }

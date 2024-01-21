@@ -5,6 +5,7 @@ import { Square } from '../../logic/square'
 import { Figure } from '../../logic/figure/figure'
 import { PawnPromotionService } from './pawn-promotion.service'
 import { createMovesSubjects } from './game-utils'
+import { MovesHistoryService } from './moves-history.service'
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class GameService {
    */
   private figureForWhichMovesDisplayed: Figure | null = null
 
-  constructor(private pawnPromotionService: PawnPromotionService) {
+  constructor(private pawnPromotionService: PawnPromotionService,
+              private movesHistoryService: MovesHistoryService) {
   }
 
   get board(): Board {
@@ -35,11 +37,11 @@ export class GameService {
 
   showOrHideMoves(figure: Figure): void {
     if (figure == this.figureForWhichMovesDisplayed) {
-      // 1. Move already displayed for this figure -> hide moves and return
+      // 1. Moves already displayed for this figure -> hide moves and return
       this.hideMoves()
       return
     } else if (this.figureForWhichMovesDisplayed !== null) {
-      // 1. Move displayed for another figure -> hide moves and continue
+      // 1. Moves displayed for another figure -> hide moves and continue
       this.hideMoves()
     }
 
@@ -58,7 +60,8 @@ export class GameService {
     if (this.board.canPromotePawn(move, figure)) {
       this.promotePawn(move, figure)
     } else {
-      this.board.makeMove(move, figure)
+      const moveLog = this.board.makeMove(move, figure)
+      this.movesHistoryService.saveMove(moveLog)
     }
   }
 
@@ -75,10 +78,11 @@ export class GameService {
     this.pawnPromotionService.promote(move, pawn)
       .pipe(
         take(1),
-        filter(pawn => pawn !== null)
+        filter(factory => factory !== null)
       )
-      .subscribe(figure =>
-        this.board.replacePawn(move, pawn, figure!)
-      )
+      .subscribe(factory => {
+        const moveLog = this.board.replacePawn(move, pawn, factory!)
+        this.movesHistoryService.saveMove(moveLog)
+      })
   }
 }

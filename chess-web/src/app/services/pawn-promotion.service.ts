@@ -15,7 +15,7 @@ import { PawnPromotion } from '../models/pawn-promotion'
 })
 export class PawnPromotionService {
   private promotionSubject: Subject<PawnPromotion | null> = new Subject<PawnPromotion | null>()
-  private replacedSubject: Subject<Figure | null> = new Subject<Figure | null>()
+  private replacedSubject: Subject<((move: Square) => Figure) | null> = new Subject<((move: Square) => Figure) | null>()
 
   constructor() {
   }
@@ -24,14 +24,14 @@ export class PawnPromotionService {
     return this.promotionSubject.asObservable()
   }
 
-  promote(move: Square, pawn: Figure): Observable<Figure | null> {
+  promote(move: Square, pawn: Figure): Observable<((move: Square) => Figure) | null> {
     const {color} = pawn
     this.promotionSubject.next({color, move})
     return this.replacedSubject.asObservable()
   }
 
-  replace(figure: Figure | null): void {
-    this.replacedSubject.next(figure)
+  replace(factory: ((move: Square) => Figure) | null): void {
+    this.replacedSubject.next(factory)
     this.promotionSubject.next(null)
   }
 }

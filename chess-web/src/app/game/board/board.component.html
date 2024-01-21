@@ -17,4 +17,4 @@
 
 <app-pawn-promotion *ngIf="pawnPromotion$ | async as promotion"
                     [promotion]="promotion"
-                    (figureToReplace)="onPawnReplace($event)"></app-pawn-promotion>
+                    (onReplace)="onPawnReplace($event)"></app-pawn-promotion>

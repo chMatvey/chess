@@ -20,6 +20,8 @@ export interface Square {
   hasFigure(): boolean
   hasEnemyFigure(color: Color): boolean
   hasFriendFigure(color: Color): boolean
+
+  positionAsString(): string
 }
 
 export class SquareImpl implements Square {
@@ -59,5 +61,9 @@ export class SquareImpl implements Square {
 
   hasFigure(): boolean {
     return !this.isEmpty()
+  }
+
+  positionAsString(): string {
+    return `${String.fromCharCode(65 + this.j)}${this.i + 1}`
   }
 }
