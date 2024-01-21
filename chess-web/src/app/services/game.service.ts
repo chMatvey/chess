@@ -4,7 +4,7 @@ import { BehaviorSubject, filter, Observable, take } from 'rxjs'
 import { Square } from '../../logic/square'
 import { Figure } from '../../logic/figure/figure'
 import { PawnPromotionService } from './pawn-promotion.service'
-import { createMovesSubjects } from './game'
+import { createMovesSubjects } from './game-utils'
 
 @Injectable({
   providedIn: 'root'

@@ -6,6 +6,7 @@ import { createFigures, createSquares, findKing } from './board-util'
 import { UnexpectedStateError } from '../app/errors/unexpected-state-error'
 import { FigureType } from './figure/figure-type'
 import { Pawn } from './figure/shared/pawn'
+import { Rook } from './figure/shared/rook'
 
 /**
  * Board is two-dimensional array 8x8 (8 rows and cols)
@@ -47,6 +48,8 @@ export interface Board {
 
   replacePawn(move: Square, pawn: Figure, toReplace: Figure): void
 
+  rooksForCastle(color: Color): Rook[]
+
   /**
    * Return true if figure can attack enemy King
    */
@@ -58,7 +61,6 @@ export interface Board {
 export class BoardImpl implements Board {
   readonly squares: Square[][]
 
-  private figures: Figure[]
   private readonly kingWhite: Figure
   private readonly kingBlack: Figure
 
@@ -66,9 +68,9 @@ export class BoardImpl implements Board {
 
   constructor() {
     this.squares = createSquares()
-    this.figures = createFigures(this.squares)
-    this.kingWhite = findKing(this.figures, Color.WHITE)
-    this.kingBlack = findKing(this.figures, Color.BLACK)
+    const figures = createFigures(this.squares)
+    this.kingWhite = findKing(figures, Color.WHITE)
+    this.kingBlack = findKing(figures, Color.BLACK)
   }
 
   getSquare(i: number, j: number): Square | null {
@@ -85,10 +87,12 @@ export class BoardImpl implements Board {
       throw new UnexpectedStateError()
     }
 
-    figure.position.removeFigure()
-    if (move.hasEnemyFigure(figure.color)) {
-      this.removeFigure(move.getFigure()!)
+    if (this.isCastle(move, figure)) {
+      this.makeCastle(move, figure)
+      return;
     }
+
+    figure.position.removeFigure()
     move.setFigure(figure.clone(move))
 
     this.moveNumber++
@@ -106,29 +110,30 @@ export class BoardImpl implements Board {
   }
 
   replacePawn(move: Square, pawn: Figure, toReplace: Figure): void {
-    if (move.hasEnemyFigure(pawn.color)) {
-      this.removeFigure(move.getFigure()!)
-    }
-    this.replaceFigure(pawn, toReplace)
     pawn.position.removeFigure()
     move.setFigure(toReplace)
 
     this.moveNumber++
   }
 
+  rooksForCastle(color: Color): Rook[] {
+    const rooks: Rook[] = []
+
+    const row = color === Color.WHITE ? 7 : 0
+    if (this.squares[row][0].getFigure()?.type === FigureType.ROOK) {
+      rooks.push(<Rook> this.squares[row][0].getFigure()!)
+    }
+    if (this.squares[row][7].getFigure()?.type === FigureType.ROOK) {
+      rooks.push(<Rook> this.squares[row][7].getFigure()!)
+    }
+
+    return rooks
+  }
+
   isCheck(figure: Figure): boolean {
     const enemyKingSquare = this.getEnemyKing(figure.color).position
     return figure.moves(this)
       .findIndex(square => square === enemyKingSquare) !== -1
-  }
-
-  private removeFigure(toRemove: Figure): void {
-    this.figures = this.figures.filter(figure => figure !== toRemove)
-  }
-
-  private replaceFigure(replaced: Figure, toReplace: Figure): void {
-    this.figures.push(toReplace)
-    this.removeFigure(replaced)
   }
 
   /**
@@ -146,5 +151,43 @@ export class BoardImpl implements Board {
 
   private getFriendKing(color: Color): Figure {
     return color === Color.WHITE ? this.kingWhite : this.kingBlack
+  }
+
+  private isCastle(move: Square, figure: Figure) {
+    if (figure.type === FigureType.KING) {
+      return Math.abs(move.j - figure.position.j) == 2
+    }
+    return false
+  }
+
+  private makeCastle(move: Square, king: Figure) {
+    const isLeftCastle = move.j - king.position.j < 0
+    const row = king.color === Color.WHITE ? 7 : 0
+
+    if (isLeftCastle) {
+      const leftRook = <Rook> this.squares[row][0].getFigure()!
+
+      king.position.removeFigure()
+      leftRook.position.removeFigure()
+
+      const kingPosition = this.squares[row][2]
+      const rookPosition = this.squares[row][3]
+
+      kingPosition.setFigure(king.clone(kingPosition));
+      rookPosition.setFigure(leftRook.clone(rookPosition));
+    } else {
+      const rightRook = <Rook> this.squares[row][7].getFigure()!
+
+      king.position.removeFigure()
+      rightRook.position.removeFigure()
+
+      const rookPosition = this.squares[row][5]
+      const kingPosition = this.squares[row][6]
+
+      rookPosition.setFigure(rightRook.clone(rookPosition));
+      kingPosition.setFigure(king.clone(kingPosition));
+    }
+
+    this.moveNumber++
   }
 }

@@ -15,6 +15,7 @@ const DIRECTIONS = [
 export abstract class Rook implements Figure {
   abstract position: Square
   abstract color: Color
+  abstract moved: boolean
   readonly type = FigureType.ROOK
 
   moves(board: Board): Square[] {

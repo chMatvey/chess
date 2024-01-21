@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Figure } from '../../logic/figure/figure'
 import { Observable, Subject } from 'rxjs'
 import { Square } from '../../logic/square'
-import { PawnPromotion } from '../models'
+import { PawnPromotion } from '../models/pawn-promotion'
 
 /**
  * Pawn promotion occurs when a pawn reaches the farthest rank from its original square.

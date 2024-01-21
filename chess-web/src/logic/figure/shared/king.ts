@@ -19,6 +19,7 @@ const DIRECTIONS = [
 export abstract class King implements Figure {
   abstract position: Square
   abstract color: Color
+  abstract moved: boolean
   readonly type = FigureType.KING
 
   moves(board: Board): Square[] {
@@ -34,8 +35,12 @@ export abstract class King implements Figure {
         }
       }
     }
+    moves.push(...this.castleMoves(board))
+
     return moves;
   }
+
+  abstract castleMoves(board: Board): Square[]
 
   abstract clone(position: Square): Figure
 }

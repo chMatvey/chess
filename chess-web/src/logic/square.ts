@@ -20,9 +20,6 @@ export interface Square {
   hasFigure(): boolean
   hasEnemyFigure(color: Color): boolean
   hasFriendFigure(color: Color): boolean
-
-  markEmpty(): void
-  unmarkEmpty(): void
 }
 
 export class SquareImpl implements Square {
@@ -62,13 +59,5 @@ export class SquareImpl implements Square {
 
   hasFigure(): boolean {
     return !this.isEmpty()
-  }
-
-  markEmpty() {
-    this.markedEmpty = true
-  }
-
-  unmarkEmpty() {
-    this.markedEmpty = false
   }
 }

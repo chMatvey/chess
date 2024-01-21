@@ -5,7 +5,7 @@ import { SquareComponent } from './square/square.component'
 import { GameService } from '../../services/game.service'
 import { PawnPromotionService } from '../../services/pawn-promotion.service'
 import { Observable } from 'rxjs'
-import { PawnPromotion } from '../../models'
+import { PawnPromotion } from '../../models/pawn-promotion'
 import { PawnPromotionComponent } from './pawn-promotion/pawn-promotion.component'
 import { Figure } from '../../../logic/figure/figure'
 

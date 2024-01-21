@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { PawnPromotionService } from '../../../services/pawn-promotion.service'
 import { FigureType } from '../../../../logic/figure/figure-type'
 import { getFactory, PawnReplaceFactory } from './pawn-promotion'
 import { Figure } from '../../../../logic/figure/figure'
-import { PawnPromotion } from '../../../models'
+import { PawnPromotion } from '../../../models/pawn-promotion'
 import { NgForOf, NgIf } from '@angular/common'
 
 @Component({
@@ -31,9 +30,6 @@ export class PawnPromotionComponent implements OnInit {
     FigureType.BISHOP,
     FigureType.KNIGHT
   ]
-
-  constructor(private pawnPromotionService: PawnPromotionService) {
-  }
 
   ngOnInit(): void {
     this.pawnReplaceFactory = getFactory(this.promotion.color);
