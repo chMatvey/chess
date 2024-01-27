@@ -54,7 +54,7 @@ export class SquareComponent implements OnInit {
   handleClick(): void {
     if (this.displayMove) {
       this.boardService.makeMove(this.square)
-    } else {
+    } else if (this.square.hasPiece()) {
       this.showMoves()
     }
   }
