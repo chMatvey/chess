@@ -1,9 +1,9 @@
-import { Figure } from '../figure'
+import { Piece } from '../piece'
 import { Square } from '../../square'
 import { Color } from '../color'
 import { Board } from '../../board'
 import { isValidPosition } from '../../square-util'
-import { FigureType } from '../figure-type'
+import { PieceType } from '../piece-type'
 
 const DIRECTIONS = [
   [1, 1],
@@ -12,10 +12,10 @@ const DIRECTIONS = [
   [1, -1]
 ]
 
-export abstract class Bishop implements Figure {
+export abstract class Bishop implements Piece {
   abstract position: Square
   abstract color: Color
-  readonly type = FigureType.BISHOP
+  readonly type = PieceType.BISHOP
 
   moves(board: Board): Square[] {
     const moves: Square[] = []
@@ -28,7 +28,7 @@ export abstract class Bishop implements Figure {
         const square = board.getSquare(i, j)!
         if (square.isEmpty()) {
           moves.push(square)
-        } else if (square.hasEnemyFigure(this.color)) {
+        } else if (square.hasEnemyPiece(this.color)) {
           moves.push(square)
           break;
         } else {
@@ -42,5 +42,5 @@ export abstract class Bishop implements Figure {
     return moves
   }
 
-  abstract clone(position: Square): Figure
+  abstract clone(position: Square): Piece
 }

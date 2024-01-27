@@ -1,7 +1,7 @@
 <div [ngClass]="['square', squareColor]" (click)="handleClick()">
-  <img *ngIf="square.hasFigure()"
-       class="figure-icon"
-       [src]="src" [alt]="figure.type">
+  <img *ngIf="square.hasPiece()"
+       class="piece-icon"
+       [src]="src" [alt]="piece.type">
 
   <ng-template [ngIf]="moveDisplay$ | async">
     <div *ngIf="square.isEmpty(); else captureBlock" class="move-circle"></div>

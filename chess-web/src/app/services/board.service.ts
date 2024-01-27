@@ -2,26 +2,26 @@ import { Injectable } from '@angular/core';
 import { Board, BoardImpl } from '../../logic/board'
 import { BehaviorSubject, filter, Observable, take } from 'rxjs'
 import { Square } from '../../logic/square'
-import { Figure } from '../../logic/figure/figure'
+import { Piece } from '../../logic/pieces/piece'
 import { PawnPromotionService } from './pawn-promotion.service'
-import { createMovesSubjects } from './game-utils'
+import { createMovesSubjects } from './board.utils'
 import { MovesHistoryService } from './moves-history.service'
 
 @Injectable({
   providedIn: 'root'
 })
-export class GameService {
+export class BoardService {
   private gameBoard: Board = new BoardImpl()
 
   /**
-   * Events of displaying possible moves of the selected figure
+   * Events of displaying possible moves of the selected pieces
    */
   private movesSubjects: BehaviorSubject<boolean>[][] = createMovesSubjects()
 
   /**
-   * Figure for which displayed available moves
+   * Piece for which displayed available moves
    */
-  private figureForWhichMovesDisplayed: Figure | null = null
+  private pieceForWhichMovesDisplayed: Piece | null = null
 
   constructor(private pawnPromotionService: PawnPromotionService,
               private movesHistoryService: MovesHistoryService) {
@@ -35,46 +35,46 @@ export class GameService {
     return this.movesSubjects[i][j].asObservable()
   }
 
-  showOrHideMoves(figure: Figure): void {
-    if (figure == this.figureForWhichMovesDisplayed) {
-      // 1. Moves already displayed for this figure -> hide moves and return
+  showOrHideMoves(piece: Piece): void {
+    if (piece == this.pieceForWhichMovesDisplayed) {
+      // 1. Moves already displayed for this pieces -> hide moves and return
       this.hideMoves()
       return
-    } else if (this.figureForWhichMovesDisplayed !== null) {
-      // 1. Moves displayed for another figure -> hide moves and continue
+    } else if (this.pieceForWhichMovesDisplayed !== null) {
+      // 1. Moves displayed for another pieces -> hide moves and continue
       this.hideMoves()
     }
 
-    // 2. Display moves for this Figure
-    this.figureForWhichMovesDisplayed = figure
-    for (const move of this.board.getFigureMoves(figure)) {
+    // 2. Display moves for this Piece
+    this.pieceForWhichMovesDisplayed = piece
+    for (const move of this.board.getPieceMoves(piece)) {
       const { i, j } = move
       this.movesSubjects[i][j].next(true)
     }
   }
 
   makeMove(move: Square): void {
-    let figure = this.figureForWhichMovesDisplayed!
+    let piece = this.pieceForWhichMovesDisplayed!
     this.hideMoves()
 
-    if (this.board.canPromotePawn(move, figure)) {
-      this.promotePawn(move, figure)
+    if (this.board.canPromotePawn(move, piece)) {
+      this.promotePawn(move, piece)
     } else {
-      const moveLog = this.board.makeMove(move, figure)
+      const moveLog = this.board.makeMove(move, piece)
       this.movesHistoryService.saveMove(moveLog)
     }
   }
 
   private hideMoves(): void {
-    const moves = this.board.getFigureMoves(this.figureForWhichMovesDisplayed!)
+    const moves = this.board.getPieceMoves(this.pieceForWhichMovesDisplayed!)
     for (const move of moves) {
       const { i, j } = move
       this.movesSubjects[i][j].next(false)
     }
-    this.figureForWhichMovesDisplayed = null
+    this.pieceForWhichMovesDisplayed = null
   }
 
-  private promotePawn(move: Square, pawn: Figure) {
+  private promotePawn(move: Square, pawn: Piece) {
     this.pawnPromotionService.promote(move, pawn)
       .pipe(
         take(1),

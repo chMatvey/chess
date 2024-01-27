@@ -1,20 +1,20 @@
 import { Square, SquareImpl } from './square'
 import { BOARD_SIZE } from './const'
-import { Figure } from './figure/figure'
-import { RookWhite } from './figure/white/rook-white'
-import { KnightWhite } from './figure/white/knight-white'
-import { BishopWhite } from './figure/white/bishop-white'
-import { QueenWhite } from './figure/white/queen-white'
-import { KingWhite } from './figure/white/king-white'
-import { PawnWhite } from './figure/white/pawn-white'
-import { RookBlack } from './figure/black/rook-black'
-import { KnightBlack } from './figure/black/knight-black'
-import { BishopBlack } from './figure/black/bishop-black'
-import { QueenBlack } from './figure/black/queen-black'
-import { KingBlack } from './figure/black/king-black'
-import { PawnBlack } from './figure/black/pawn-black'
-import { Color } from './figure/color'
-import { FigureType } from './figure/figure-type'
+import { Piece } from './pieces/piece'
+import { RookWhite } from './pieces/white/rook-white'
+import { KnightWhite } from './pieces/white/knight-white'
+import { BishopWhite } from './pieces/white/bishop-white'
+import { QueenWhite } from './pieces/white/queen-white'
+import { KingWhite } from './pieces/white/king-white'
+import { PawnWhite } from './pieces/white/pawn-white'
+import { RookBlack } from './pieces/black/rook-black'
+import { KnightBlack } from './pieces/black/knight-black'
+import { BishopBlack } from './pieces/black/bishop-black'
+import { QueenBlack } from './pieces/black/queen-black'
+import { KingBlack } from './pieces/black/king-black'
+import { PawnBlack } from './pieces/black/pawn-black'
+import { Color } from './pieces/color'
+import { PieceType } from './pieces/piece-type'
 
 export function createSquares(): Square[][] {
   const squares: Square[][] = []
@@ -28,17 +28,17 @@ export function createSquares(): Square[][] {
   return squares
 }
 
-export function createFigures(squares: Square[][]): Figure[] {
-  const figures: Figure[] = []
+export function createPieces(squares: Square[][]): Piece[] {
+  const pieces: Piece[] = []
 
-  createWhiteFigures(squares, figures)
-  createBlackFigures(squares, figures)
+  createWhitePieces(squares, pieces)
+  createBlackPieces(squares, pieces)
 
-  return figures
+  return pieces
 }
 
-function createWhiteFigures(squares: Square[][], figures: Figure[]) {
-  figures.push(
+function createWhitePieces(squares: Square[][], pieces: Piece[]) {
+  pieces.push(
     new RookWhite(squares[7][0]),
     new KnightWhite(squares[7][1]),
     new BishopWhite(squares[7][2]),
@@ -50,11 +50,11 @@ function createWhiteFigures(squares: Square[][], figures: Figure[]) {
   )
 
   for (let j = 0; j < BOARD_SIZE; j++)
-    figures.push(new PawnWhite(squares[6][j]))
+    pieces.push(new PawnWhite(squares[6][j]))
 }
 
-function createBlackFigures(squares: Square[][], figures: Figure[]) {
-  figures.push(
+function createBlackPieces(squares: Square[][], pieces: Piece[]) {
+  pieces.push(
     new RookBlack(squares[0][0]),
     new KnightBlack(squares[0][1]),
     new BishopBlack(squares[0][2]),
@@ -66,11 +66,11 @@ function createBlackFigures(squares: Square[][], figures: Figure[]) {
   )
 
   for (let j = 0; j < BOARD_SIZE; j++) {
-    figures.push(new PawnBlack(squares[1][j]))
+    pieces.push(new PawnBlack(squares[1][j]))
   }
 }
 
-export function findKing(figures: Figure[], color: Color): Figure {
-  return  figures
-    .find(figure => figure.color === color && figure.type === FigureType.KING)!
+export function findKing(pieces: Piece[], color: Color): Piece {
+  return pieces
+    .find(piece => piece.color === color && piece.type === PieceType.KING)!
 }

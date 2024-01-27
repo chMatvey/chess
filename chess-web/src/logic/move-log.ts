@@ -1,34 +1,34 @@
-import { FigureType } from './figure/figure-type'
+import { PieceType } from './pieces/piece-type'
 import { Square } from './square'
-import { Figure } from './figure/figure'
+import { Piece } from './pieces/piece'
 import { MoveType } from './move-type'
 import { UnexpectedMoveTypeError } from './errors/unexpected-move-type-error'
 
 export interface MoveLog {
   position?: string
-  figureType?: FigureType
+  pieceType?: PieceType
   moveType: MoveType
 }
 
-export function createMoveLog(square: Square, figure: Figure, capture: boolean): MoveLog {
+export function createMoveLog(square: Square, piece: Piece, capture: boolean): MoveLog {
   const moveType = capture ? MoveType.CAPTURE : MoveType.MOVE
   const position = square.positionAsString()
-  const figureType = figure.type
+  const pieceType = piece.type
 
-  return { position, figureType, moveType }
+  return { position, pieceType, moveType }
 }
 
 /**
- * @param square new figure position
- * @param figure which is being replaced by a pawn
+ * @param square new pieces position
+ * @param piece which is being replaced by a pawn
  * @param capture is it capture move or not
  */
-export function createPromoteMoveLog(square: Square, figure: Figure, capture: boolean): MoveLog {
+export function createPromoteMoveLog(square: Square, piece: Piece, capture: boolean): MoveLog {
   const moveType = capture ? MoveType.CAPTURE_AND_PROMOTE : MoveType.MOVE_AND_PROMOTE
   const position = square.positionAsString()
-  const figureType = FigureType.PAWN
+  const pieceType = piece.type
 
-  return { position, figureType, moveType }
+  return { position, pieceType, moveType }
 }
 
 export function createCastleMoveLog(short: boolean): MoveLog {
@@ -40,13 +40,13 @@ export function createCastleMoveLog(short: boolean): MoveLog {
 export function toMessage(move: MoveLog) {
   switch (move.moveType) {
     case MoveType.MOVE:
-      return `${move.figureType} ${move.position}`
+      return `${move.pieceType} ${move.position}`
     case MoveType.CAPTURE:
-      return `${move.figureType} x${move.position}`
+      return `${move.pieceType} x${move.position}`
     case MoveType.MOVE_AND_PROMOTE:
-      return `pawn ${move.position} = ${move.figureType}`
+      return `pawn ${move.position} = ${move.pieceType}`
     case MoveType.CAPTURE_AND_PROMOTE:
-      return `pawn x${move.position} = ${move.figureType}`
+      return `pawn x${move.position} = ${move.pieceType}`
     case MoveType.SHORT_CASTLING:
       return 'O-o'
     case MoveType.LONG_CASTLING:

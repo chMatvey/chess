@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Figure } from '../../logic/figure/figure'
+import { Piece } from '../../logic/pieces/piece'
 import { Observable, Subject } from 'rxjs'
 import { Square } from '../../logic/square'
 import { PawnPromotion } from '../models/pawn-promotion'
@@ -15,7 +15,7 @@ import { PawnPromotion } from '../models/pawn-promotion'
 })
 export class PawnPromotionService {
   private promotionSubject: Subject<PawnPromotion | null> = new Subject<PawnPromotion | null>()
-  private replacedSubject: Subject<((move: Square) => Figure) | null> = new Subject<((move: Square) => Figure) | null>()
+  private replacedSubject: Subject<((move: Square) => Piece) | null> = new Subject<((move: Square) => Piece) | null>()
 
   constructor() {
   }
@@ -24,13 +24,13 @@ export class PawnPromotionService {
     return this.promotionSubject.asObservable()
   }
 
-  promote(move: Square, pawn: Figure): Observable<((move: Square) => Figure) | null> {
+  promote(move: Square, pawn: Piece): Observable<((move: Square) => Piece) | null> {
     const {color} = pawn
     this.promotionSubject.next({color, move})
     return this.replacedSubject.asObservable()
   }
 
-  replace(factory: ((move: Square) => Figure) | null): void {
+  replace(factory: ((move: Square) => Piece) | null): void {
     this.replacedSubject.next(factory)
     this.promotionSubject.next(null)
   }

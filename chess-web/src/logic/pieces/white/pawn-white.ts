@@ -1,18 +1,21 @@
+import { Piece } from '../piece'
+import { Color } from '../color'
 import { Board } from '../../board'
 import { Square } from '../../square'
-import { Color } from '../color'
-import { Figure } from '../figure'
 import { Pawn } from '../shared/pawn'
 
-const ROW_START_INDEX = 1
-const ROW_END_INDEX = 7
+/**
+ * A2...H2 Squares
+ */
+const ROW_START_INDEX = 6
+const ROW_END_INDEX = 0
 
-export class PawnBlack extends Pawn implements Figure {
-  readonly color = Color.BLACK
+export class PawnWhite extends Pawn implements Piece {
+  readonly color = Color.WHITE
 
-  public constructor(readonly position: Square) {
+  constructor(readonly position: Square) {
     super()
-    position.setFigure(this)
+    position.setPiece(this)
   }
 
   moves(board: Board): Square[] {
@@ -25,8 +28,8 @@ export class PawnBlack extends Pawn implements Figure {
     return moves
   }
 
-  clone(position: Square): Figure {
-    return new PawnBlack(position)
+  clone(position: Square): Piece {
+    return new PawnWhite(position)
   }
 
   override canPromote(move: Square): boolean {
@@ -39,7 +42,7 @@ export class PawnBlack extends Pawn implements Figure {
   private moveForward(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const forwardSquare = board.getSquare(i + 1, j)
+    const forwardSquare = board.getSquare(i - 1, j)
     if (forwardSquare?.isEmpty()) {
       moves.push(forwardSquare)
     }
@@ -52,8 +55,8 @@ export class PawnBlack extends Pawn implements Figure {
     const { i, j } = this.position
 
     if (i === ROW_START_INDEX) {
-      const forwardSquare = board.getSquare(i + 1, j)!
-      const doubleForwardSquare = board.getSquare(i + 2, j)!
+      const forwardSquare = board.getSquare(i - 1, j)!
+      const doubleForwardSquare = board.getSquare(i - 2, j)!
       if (forwardSquare.isEmpty() && doubleForwardSquare.isEmpty()) {
         moves.push(doubleForwardSquare)
       }
@@ -66,13 +69,13 @@ export class PawnBlack extends Pawn implements Figure {
   private captureDiagonal(board: Board, moves: Square[]): void {
     const { i, j } = this.position
 
-    const leftDiagonalSquare = board.getSquare(i + 1, j - 1)
-    if (leftDiagonalSquare?.hasEnemyFigure(this.color)) {
+    const leftDiagonalSquare = board.getSquare(i - 1, j - 1)
+    if (leftDiagonalSquare?.hasEnemyPiece(this.color)) {
       moves.push(leftDiagonalSquare)
     }
 
-    const rightDiagonalSquare = board.getSquare(i + 1, j + 1)
-    if (rightDiagonalSquare?.hasEnemyFigure(this.color)) {
+    const rightDiagonalSquare = board.getSquare(i - 1, j + 1)
+    if (rightDiagonalSquare?.hasEnemyPiece(this.color)) {
       moves.push(rightDiagonalSquare)
     }
   }

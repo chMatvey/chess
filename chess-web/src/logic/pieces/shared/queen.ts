@@ -1,22 +1,25 @@
-import { Figure } from '../figure'
+import { Piece } from '../piece'
 import { Square } from '../../square'
 import { Color } from '../color'
 import { Board } from '../../board'
-import { FigureType } from '../figure-type'
 import { isValidPosition } from '../../square-util'
+import { PieceType } from '../piece-type'
 
 const DIRECTIONS = [
-  [-1, 0],
-  [0, 1],
   [1, 0],
-  [0, -1]
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+  [0, -1],
+  [1, -1]
 ]
 
-export abstract class Rook implements Figure {
+export abstract class Queen implements Piece {
   abstract position: Square
   abstract color: Color
-  abstract moved: boolean
-  readonly type = FigureType.ROOK
+  readonly type = PieceType.QUEEN
 
   moves(board: Board): Square[] {
     const moves: Square[] = []
@@ -29,7 +32,7 @@ export abstract class Rook implements Figure {
         const square = board.getSquare(i, j)!
         if (square.isEmpty()) {
           moves.push(square)
-        } else if (square.hasEnemyFigure(this.color)) {
+        } else if (square.hasEnemyPiece(this.color)) {
           moves.push(square)
           break
         } else {
@@ -41,8 +44,8 @@ export abstract class Rook implements Figure {
       }
     }
 
-    return moves;
+    return moves
   }
 
-  abstract clone(position: Square): Figure
+  abstract clone(position: Square): Piece
 }

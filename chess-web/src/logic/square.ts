@@ -1,5 +1,5 @@
-import { Figure } from './figure/figure'
-import { Color } from './figure/color'
+import { Piece } from './pieces/piece'
+import { Color } from './pieces/color'
 
 /**
  * i - row index on board
@@ -12,54 +12,54 @@ export interface Square {
   i: number,
   j: number,
 
-  getFigure(): Figure | null
-  setFigure(figure: Figure): void
-  removeFigure(): void
+  getPiece(): Piece | null
+  setPiece(piece: Piece): void
+  removePiece(): void
 
   isEmpty(): boolean
-  hasFigure(): boolean
-  hasEnemyFigure(color: Color): boolean
-  hasFriendFigure(color: Color): boolean
+  hasPiece(): boolean
+  hasEnemyPiece(color: Color): boolean
+  hasFriendPiece(color: Color): boolean
 
   positionAsString(): string
 }
 
 export class SquareImpl implements Square {
-  private figure: Figure | null = null
+  private piece: Piece | null = null
   private markedEmpty: boolean = false
 
   constructor(public i: number, public j: number) {
   }
 
-  getFigure(): Figure | null {
-    return this.figure
+  getPiece(): Piece | null {
+    return this.piece
   }
 
-  setFigure(figure: Figure): void {
-    this.figure = figure
+  setPiece(piece: Piece): void {
+    this.piece = piece
   }
 
-  removeFigure(): void {
-    this.figure = null
+  removePiece(): void {
+    this.piece = null
   }
 
   isEmpty(): boolean {
-    return this.markedEmpty || !this.figure
+    return this.markedEmpty || !this.piece
   }
 
-  hasEnemyFigure(color: Color): boolean {
+  hasEnemyPiece(color: Color): boolean {
     if (this.isEmpty())
       return false
-    return this.figure!.color !== color
+    return this.piece!.color !== color
   }
 
-  hasFriendFigure(color: Color): boolean {
+  hasFriendPiece(color: Color): boolean {
     if (this.isEmpty())
       return false
-    return this.figure!.color === color
+    return this.piece!.color === color
   }
 
-  hasFigure(): boolean {
+  hasPiece(): boolean {
     return !this.isEmpty()
   }
 

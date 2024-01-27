@@ -1,19 +1,19 @@
-import { Figure } from '../../../../logic/figure/figure'
-import { FigureType } from '../../../../logic/figure/figure-type'
-import { QueenWhite } from '../../../../logic/figure/white/queen-white'
+import { Piece } from '../../../../logic/pieces/piece'
+import { PieceType } from '../../../../logic/pieces/piece-type'
+import { QueenWhite } from '../../../../logic/pieces/white/queen-white'
 import { Square } from '../../../../logic/square'
-import { RookWhite } from '../../../../logic/figure/white/rook-white'
-import { BishopWhite } from '../../../../logic/figure/white/bishop-white'
-import { KnightWhite } from '../../../../logic/figure/white/knight-white'
-import { UnexpectedFigureTypeError } from '../../../../logic/errors/unexpected-figure-type-error'
-import { QueenBlack } from '../../../../logic/figure/black/queen-black'
-import { RookBlack } from '../../../../logic/figure/black/rook-black'
-import { BishopBlack } from '../../../../logic/figure/black/bishop-black'
-import { KnightBlack } from '../../../../logic/figure/black/knight-black'
-import { Color } from '../../../../logic/figure/color'
+import { RookWhite } from '../../../../logic/pieces/white/rook-white'
+import { BishopWhite } from '../../../../logic/pieces/white/bishop-white'
+import { KnightWhite } from '../../../../logic/pieces/white/knight-white'
+import { UnexpectedPieceTypeError } from '../../../../logic/errors/unexpected-piece-type-error'
+import { QueenBlack } from '../../../../logic/pieces/black/queen-black'
+import { RookBlack } from '../../../../logic/pieces/black/rook-black'
+import { BishopBlack } from '../../../../logic/pieces/black/bishop-black'
+import { KnightBlack } from '../../../../logic/pieces/black/knight-black'
+import { Color } from '../../../../logic/pieces/color'
 
 export interface PawnReplaceFactory {
-  create(type: FigureType, position: Square): Figure
+  create(type: PieceType, position: Square): Piece
 }
 
 export function getFactory(color: Color): PawnReplaceFactory {
@@ -23,35 +23,35 @@ export function getFactory(color: Color): PawnReplaceFactory {
 }
 
 export class PawnReplaceWhiteFactory implements PawnReplaceFactory {
-  create(type: FigureType, position: Square): Figure {
+  create(type: PieceType, position: Square): Piece {
     switch (type) {
-      case FigureType.QUEEN:
+      case PieceType.QUEEN:
         return new QueenWhite(position)
-      case FigureType.ROOK:
+      case PieceType.ROOK:
         return new RookWhite(position)
-      case FigureType.BISHOP:
+      case PieceType.BISHOP:
         return new BishopWhite(position)
-      case FigureType.KNIGHT:
+      case PieceType.KNIGHT:
         return new KnightWhite(position)
       default:
-        throw new UnexpectedFigureTypeError()
+        throw new UnexpectedPieceTypeError()
     }
   }
 }
 
 export class PawnReplaceBlackFactory implements PawnReplaceFactory {
-  create(type: FigureType, position: Square): Figure {
+  create(type: PieceType, position: Square): Piece {
     switch (type) {
-      case FigureType.QUEEN:
+      case PieceType.QUEEN:
         return new QueenBlack(position)
-      case FigureType.ROOK:
+      case PieceType.ROOK:
         return new RookBlack(position)
-      case FigureType.BISHOP:
+      case PieceType.BISHOP:
         return new BishopBlack(position)
-      case FigureType.KNIGHT:
+      case PieceType.KNIGHT:
         return new KnightBlack(position)
       default:
-        throw new UnexpectedFigureTypeError()
+        throw new UnexpectedPieceTypeError()
     }
   }
 }

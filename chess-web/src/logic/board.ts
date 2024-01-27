@@ -1,12 +1,12 @@
 import { Square } from './square'
-import { Figure } from './figure/figure'
-import { Color } from './figure/color'
+import { Piece } from './pieces/piece'
+import { Color } from './pieces/color'
 import { isValidPosition } from './square-util'
-import { createFigures, createSquares, findKing } from './board-util'
+import { createPieces, createSquares, findKing } from './board-util'
 import { UnexpectedStateError } from './errors/unexpected-state-error'
-import { FigureType } from './figure/figure-type'
-import { Pawn } from './figure/shared/pawn'
-import { Rook } from './figure/shared/rook'
+import { PieceType } from './pieces/piece-type'
+import { Pawn } from './pieces/shared/pawn'
+import { Rook } from './pieces/shared/rook'
 import { createCastleMoveLog, createMoveLog, createPromoteMoveLog, MoveLog } from './move-log'
 
 /**
@@ -41,20 +41,20 @@ export interface Board {
    */
   getSquare(i: number, j: number): Square | null
 
-  getFigureMoves(figure: Figure): Square[]
+  getPieceMoves(piece: Piece): Square[]
 
-  makeMove(move: Square, figure: Figure): MoveLog
+  makeMove(move: Square, piece: Piece): MoveLog
 
-  canPromotePawn(move: Square, figure: Figure): boolean
+  canPromotePawn(move: Square, piece: Piece): boolean
 
-  replacePawn(move: Square, pawn: Figure, factory: (move: Square) => Figure): MoveLog
+  replacePawn(move: Square, pawn: Piece, factory: (move: Square) => Piece): MoveLog
 
   rooksForCastle(color: Color): Rook[]
 
   /**
-   * Return true if figure can attack enemy King
+   * Return true if pieces can attack enemy King
    */
-  isCheck(figure: Figure): boolean
+  isCheck(piece: Piece): boolean
 
   // todo is check and mate
 }
@@ -62,47 +62,47 @@ export interface Board {
 export class BoardImpl implements Board {
   readonly squares: Square[][]
 
-  private readonly kingWhite: Figure
-  private readonly kingBlack: Figure
+  private readonly kingWhite: Piece
+  private readonly kingBlack: Piece
 
   private moveNumber = 0
 
   constructor() {
     this.squares = createSquares()
-    const figures = createFigures(this.squares)
-    this.kingWhite = findKing(figures, Color.WHITE)
-    this.kingBlack = findKing(figures, Color.BLACK)
+    const pieces = createPieces(this.squares)
+    this.kingWhite = findKing(pieces, Color.WHITE)
+    this.kingBlack = findKing(pieces, Color.BLACK)
   }
 
   getSquare(i: number, j: number): Square | null {
     return isValidPosition(i, j) ? this.squares[i][j] : null
   }
 
-  getFigureMoves(figure: Figure): Square[] {
-    return this.isYourMove(figure.color) ? figure.moves(this) : []
-    // todo check can enemy attack king if figure move-log.ts
+  getPieceMoves(piece: Piece): Square[] {
+    return this.isYourMove(piece.color) ? piece.moves(this) : []
+    // todo check can enemy attack king if pieces move-log.ts
   }
 
-  makeMove(move: Square, figure: Figure): MoveLog {
-    if (move.hasFriendFigure(figure.color)) {
+  makeMove(move: Square, piece: Piece): MoveLog {
+    if (move.hasFriendPiece(piece.color)) {
       throw new UnexpectedStateError()
     }
 
-    if (this.isCastle(move, figure)) {
-      return this.makeCastle(move, figure)
+    if (this.isCastle(move, piece)) {
+      return this.makeCastle(move, piece)
     }
 
-    const captured = move.hasEnemyFigure(figure.color)
-    figure.position.removeFigure()
-    figure.clone(move)
+    const captured = move.hasEnemyPiece(piece.color)
+    piece.position.removePiece()
+    piece.clone(move)
     this.moveNumber++
 
-    return createMoveLog(move, figure, captured)
+    return createMoveLog(move, piece, captured)
   }
 
-  canPromotePawn(move: Square, figure: Figure): boolean {
-    if (figure.type === FigureType.PAWN) {
-      const pawn = <Pawn> figure
+  canPromotePawn(move: Square, piece: Piece): boolean {
+    if (piece.type === PieceType.PAWN) {
+      const pawn = <Pawn> piece
       if (pawn.canPromote(move)) {
         return true
       }
@@ -111,10 +111,10 @@ export class BoardImpl implements Board {
     return false
   }
 
-  replacePawn(move: Square, pawn: Figure, factory: (move: Square) => Figure): MoveLog {
-    const captured = move.hasEnemyFigure(pawn.color)
+  replacePawn(move: Square, pawn: Piece, factory: (move: Square) => Piece): MoveLog {
+    const captured = move.hasEnemyPiece(pawn.color)
     const toReplace = factory(move)
-    pawn.position.removeFigure()
+    pawn.position.removePiece()
 
     this.moveNumber++
 
@@ -125,19 +125,19 @@ export class BoardImpl implements Board {
     const rooks: Rook[] = []
 
     const row = color === Color.WHITE ? 7 : 0
-    if (this.squares[row][0].getFigure()?.type === FigureType.ROOK) {
-      rooks.push(<Rook> this.squares[row][0].getFigure()!)
+    if (this.squares[row][0].getPiece()?.type === PieceType.ROOK) {
+      rooks.push(<Rook> this.squares[row][0].getPiece()!)
     }
-    if (this.squares[row][7].getFigure()?.type === FigureType.ROOK) {
-      rooks.push(<Rook> this.squares[row][7].getFigure()!)
+    if (this.squares[row][7].getPiece()?.type === PieceType.ROOK) {
+      rooks.push(<Rook> this.squares[row][7].getPiece()!)
     }
 
     return rooks
   }
 
-  isCheck(figure: Figure): boolean {
-    const enemyKingSquare = this.getEnemyKing(figure.color).position
-    return figure.moves(this)
+  isCheck(piece: Piece): boolean {
+    const enemyKingSquare = this.getEnemyKing(piece.color).position
+    return piece.moves(this)
       .findIndex(square => square === enemyKingSquare) !== -1
   }
 
@@ -150,42 +150,42 @@ export class BoardImpl implements Board {
       this.moveNumber % 2 === 1
   }
 
-  private getEnemyKing(color: Color): Figure {
+  private getEnemyKing(color: Color): Piece {
     return color === Color.WHITE ? this.kingBlack : this.kingWhite
   }
 
-  private getFriendKing(color: Color): Figure {
+  private getFriendKing(color: Color): Piece {
     return color === Color.WHITE ? this.kingWhite : this.kingBlack
   }
 
-  private isCastle(move: Square, figure: Figure) {
-    if (figure.type === FigureType.KING) {
-      return Math.abs(move.j - figure.position.j) == 2
+  private isCastle(move: Square, piece: Piece) {
+    if (piece.type === PieceType.KING) {
+      return Math.abs(move.j - piece.position.j) == 2
     }
     return false
   }
 
-  private makeCastle(move: Square, king: Figure): MoveLog {
+  private makeCastle(move: Square, king: Piece): MoveLog {
     const isLeftCastle = move.j - king.position.j < 0
     const row = king.color === Color.WHITE ? 7 : 0
 
     this.moveNumber++
 
     if (isLeftCastle) {
-      const leftRook = <Rook> this.squares[row][0].getFigure()!
+      const leftRook = <Rook> this.squares[row][0].getPiece()!
 
-      king.position.removeFigure()
-      leftRook.position.removeFigure()
+      king.position.removePiece()
+      leftRook.position.removePiece()
 
       king.clone(this.squares[row][2])
       leftRook.clone(this.squares[row][3])
 
       return createCastleMoveLog(false)
     } else {
-      const rightRook = <Rook> this.squares[row][7].getFigure()!
+      const rightRook = <Rook> this.squares[row][7].getPiece()!
 
-      king.position.removeFigure()
-      rightRook.position.removeFigure()
+      king.position.removePiece()
+      rightRook.position.removePiece()
 
       rightRook.clone(this.squares[row][5])
       king.clone(this.squares[row][6])

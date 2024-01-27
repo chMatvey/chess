@@ -1,8 +1,8 @@
 <div class="popup">
   <div class="pawn-promotion">
-    <div *ngFor="let type of figureTypes" class="figure"
+    <div *ngFor="let type of pieceTypes" class="piece"
          (click)="select(type)">
-      <img class="figure-icon" [src]="src(type)" [alt]="type">
+      <img class="piece-icon" [src]="src(type)" [alt]="type">
     </div>
 
     <div class="close">

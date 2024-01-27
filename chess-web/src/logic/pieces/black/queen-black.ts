@@ -1,17 +1,17 @@
 import { Queen } from '../shared/queen'
-import { Figure } from '../figure'
+import { Piece } from '../piece'
 import { Color } from '../color'
 import { Square } from '../../square'
 
-export class QueenBlack extends Queen implements Figure {
+export class QueenBlack extends Queen implements Piece {
   color = Color.BLACK
 
   constructor(readonly position: Square) {
     super()
-    position.setFigure(this)
+    position.setPiece(this)
   }
 
-  override clone(position: Square): Figure {
+  override clone(position: Square): Piece {
     return new QueenBlack(position)
   }
 }

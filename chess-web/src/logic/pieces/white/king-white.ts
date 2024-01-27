@@ -1,19 +1,19 @@
 import { King } from '../shared/king'
-import { Figure } from '../figure'
+import { Piece } from '../piece'
 import { Color } from '../color'
 import { Square } from '../../square'
 import { Board } from '../../board'
 import { BOARD_SIZE } from '../../const'
 
-export class KingWhite extends King implements Figure {
+export class KingWhite extends King implements Piece {
   readonly color = Color.WHITE
 
   constructor(readonly position: Square, readonly moved = false) {
     super()
-    position.setFigure(this)
+    position.setPiece(this)
   }
 
-  override clone(position: Square): Figure {
+  override clone(position: Square): Piece {
     return new KingWhite(position, true)
   }
 
@@ -40,7 +40,7 @@ export class KingWhite extends King implements Figure {
 
     for (let j = this.position.j - 1; j > 0; j--) {
       const square = board.getSquare(this.position.i, j)!
-      if (square.hasFigure()) {
+      if (square.hasPiece()) {
         emptySquares = false
         break;
       }
@@ -56,7 +56,7 @@ export class KingWhite extends King implements Figure {
 
     for (let j = this.position.j + 1; j < BOARD_SIZE - 1; j++) {
       const square = board.getSquare(this.position.i, j)!
-      if (square.hasFigure()) {
+      if (square.hasPiece()) {
         emptySquares = false
         break
       }

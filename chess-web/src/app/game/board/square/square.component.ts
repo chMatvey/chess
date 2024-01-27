@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Square } from '../../../../logic/square'
-import { Figure } from '../../../../logic/figure/figure'
+import { Piece } from '../../../../logic/pieces/piece'
 import { AsyncPipe, NgClass, NgIf } from '@angular/common'
-import { GameService } from '../../../services/game.service'
+import { BoardService } from '../../../services/board.service'
 import { Observable, tap } from 'rxjs'
 
 @Component({
@@ -23,11 +23,11 @@ export class SquareComponent implements OnInit {
   moveDisplay$!: Observable<boolean>
   displayMove: boolean = false
 
-  constructor(private gameService: GameService) {
+  constructor(private boardService: BoardService) {
   }
 
-  get figure(): Figure {
-    return this.square.getFigure()!
+  get piece(): Piece {
+    return this.square.getPiece()!
   }
 
   get squareColor(): string {
@@ -40,12 +40,12 @@ export class SquareComponent implements OnInit {
   }
 
   get src(): string {
-    return `assets/figures/${this.figure.color}/${this.figure.type}.svg`
+    return `assets/pieces/${this.piece.color}/${this.piece.type}.svg`
   }
 
   ngOnInit(): void {
     const {i, j} = this.square
-    this.moveDisplay$ = this.gameService.moveDisplay$(i, j)
+    this.moveDisplay$ = this.boardService.moveDisplay$(i, j)
       .pipe(
         tap(displayMoves => this.displayMove = displayMoves)
       )
@@ -53,13 +53,13 @@ export class SquareComponent implements OnInit {
 
   handleClick(): void {
     if (this.displayMove) {
-      this.gameService.makeMove(this.square)
+      this.boardService.makeMove(this.square)
     } else {
       this.showMoves()
     }
   }
 
   showMoves(): void {
-    this.gameService.showOrHideMoves(this.figure)
+    this.boardService.showOrHideMoves(this.piece)
   }
 }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FigureType } from '../../../../logic/figure/figure-type'
+import { PieceType } from '../../../../logic/pieces/piece-type'
 import { getFactory, PawnReplaceFactory } from './pawn-promotion'
-import { Figure } from '../../../../logic/figure/figure'
+import { Piece } from '../../../../logic/pieces/piece'
 import { PawnPromotion } from '../../../models/pawn-promotion'
 import { NgForOf, NgIf } from '@angular/common'
 import { Square } from '../../../../logic/square'
@@ -21,26 +21,26 @@ export class PawnPromotionComponent implements OnInit {
   promotion!: PawnPromotion
 
   @Output()
-  onReplace = new EventEmitter<((move: Square) => Figure) | null>
+  onReplace = new EventEmitter<((move: Square) => Piece) | null>
 
   pawnReplaceFactory!: PawnReplaceFactory
 
-  figureTypes = [
-    FigureType.QUEEN,
-    FigureType.ROOK,
-    FigureType.BISHOP,
-    FigureType.KNIGHT
+  pieceTypes = [
+    PieceType.QUEEN,
+    PieceType.ROOK,
+    PieceType.BISHOP,
+    PieceType.KNIGHT
   ]
 
   ngOnInit(): void {
     this.pawnReplaceFactory = getFactory(this.promotion.color);
   }
 
-  src(type: FigureType): String {
-    return `assets/figures/${this.promotion.color}/${type}.svg`
+  src(type: PieceType): String {
+    return `assets/pieces/${this.promotion.color}/${type}.svg`
   }
 
-  select(type: FigureType): void {
+  select(type: PieceType): void {
     this.onReplace.emit((move) => this.pawnReplaceFactory.create(type, move))
   }
 
