@@ -3,11 +3,11 @@ import { Figure } from './figure/figure'
 import { Color } from './figure/color'
 import { isValidPosition } from './square-util'
 import { createFigures, createSquares, findKing } from './board-util'
-import { UnexpectedStateError } from '../app/errors/unexpected-state-error'
+import { UnexpectedStateError } from './errors/unexpected-state-error'
 import { FigureType } from './figure/figure-type'
 import { Pawn } from './figure/shared/pawn'
 import { Rook } from './figure/shared/rook'
-import { MoveLog } from './move-log'
+import { createCastleMoveLog, createMoveLog, createPromoteMoveLog, MoveLog } from './move-log'
 
 /**
  * Board is two-dimensional array 8x8 (8 rows and cols)
@@ -97,11 +97,7 @@ export class BoardImpl implements Board {
     figure.clone(move)
     this.moveNumber++
 
-    return {
-      position: move.positionAsString(),
-      figure: figure.type,
-      captured
-    }
+    return createMoveLog(move, figure, captured)
   }
 
   canPromotePawn(move: Square, figure: Figure): boolean {
@@ -122,12 +118,7 @@ export class BoardImpl implements Board {
 
     this.moveNumber++
 
-    return {
-      position: move.positionAsString(),
-      figure: pawn.type,
-      captured,
-      replaced: toReplace.type
-    }
+    return createPromoteMoveLog(move, toReplace, captured)
   }
 
   rooksForCastle(color: Color): Rook[] {
@@ -178,6 +169,8 @@ export class BoardImpl implements Board {
     const isLeftCastle = move.j - king.position.j < 0
     const row = king.color === Color.WHITE ? 7 : 0
 
+    this.moveNumber++
+
     if (isLeftCastle) {
       const leftRook = <Rook> this.squares[row][0].getFigure()!
 
@@ -186,6 +179,8 @@ export class BoardImpl implements Board {
 
       king.clone(this.squares[row][2])
       leftRook.clone(this.squares[row][3])
+
+      return createCastleMoveLog(false)
     } else {
       const rightRook = <Rook> this.squares[row][7].getFigure()!
 
@@ -194,12 +189,8 @@ export class BoardImpl implements Board {
 
       rightRook.clone(this.squares[row][5])
       king.clone(this.squares[row][6])
-    }
 
-    this.moveNumber++
-
-    return {
-      castle: true
+      return createCastleMoveLog(true)
     }
   }
 }
