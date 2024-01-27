@@ -65,7 +65,7 @@ export class BoardImpl implements Board {
   private readonly kingWhite: Piece
   private readonly kingBlack: Piece
 
-  private moveNumber = 0
+  private whiteMove = true
 
   constructor() {
     this.squares = createSquares()
@@ -95,7 +95,7 @@ export class BoardImpl implements Board {
     const captured = move.hasEnemyPiece(piece.color)
     piece.position.removePiece()
     piece.clone(move)
-    this.moveNumber++
+    this.whiteMove = !this.whiteMove
 
     return createMoveLog(move, piece, captured)
   }
@@ -116,7 +116,7 @@ export class BoardImpl implements Board {
     const toReplace = factory(move)
     pawn.position.removePiece()
 
-    this.moveNumber++
+    this.whiteMove = !this.whiteMove
 
     return createPromoteMoveLog(move, toReplace, captured)
   }
@@ -145,9 +145,7 @@ export class BoardImpl implements Board {
    * Check is white or is black move-log.ts ?
    */
   private isYourMove(color: Color) {
-    return color === Color.WHITE ?
-      this.moveNumber % 2 === 0 :
-      this.moveNumber % 2 === 1
+    return color === Color.WHITE ? this.whiteMove : !this.whiteMove
   }
 
   private getEnemyKing(color: Color): Piece {
@@ -169,7 +167,7 @@ export class BoardImpl implements Board {
     const isLeftCastle = move.j - king.position.j < 0
     const row = king.color === Color.WHITE ? 7 : 0
 
-    this.moveNumber++
+    this.whiteMove = !this.whiteMove
 
     if (isLeftCastle) {
       const leftRook = <Rook> this.squares[row][0].getPiece()!

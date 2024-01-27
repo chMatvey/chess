@@ -5,9 +5,19 @@ import { MoveType } from './move-type'
 import { UnexpectedMoveTypeError } from './errors/unexpected-move-type-error'
 
 export interface MoveLog {
+  moveType: MoveType
   position?: string
   pieceType?: PieceType
-  moveType: MoveType
+  message: string
+}
+
+export class MoveLogImpl implements MoveLog {
+  readonly message
+  constructor(readonly moveType: MoveType,
+              readonly position?: string,
+              readonly pieceType?: PieceType) {
+    this.message = toMessage(moveType, position, pieceType)
+  }
 }
 
 export function createMoveLog(square: Square, piece: Piece, capture: boolean): MoveLog {
@@ -15,7 +25,7 @@ export function createMoveLog(square: Square, piece: Piece, capture: boolean): M
   const position = square.positionAsString()
   const pieceType = piece.type
 
-  return { position, pieceType, moveType }
+  return new MoveLogImpl(moveType, position, pieceType)
 }
 
 /**
@@ -28,25 +38,25 @@ export function createPromoteMoveLog(square: Square, piece: Piece, capture: bool
   const position = square.positionAsString()
   const pieceType = piece.type
 
-  return { position, pieceType, moveType }
+  return new MoveLogImpl(moveType, position, pieceType)
 }
 
 export function createCastleMoveLog(short: boolean): MoveLog {
   const moveType = short ? MoveType.SHORT_CASTLING : MoveType.LONG_CASTLING
 
-  return { moveType }
+  return new MoveLogImpl(moveType)
 }
 
-export function toMessage(move: MoveLog) {
-  switch (move.moveType) {
+export function toMessage(moveType: MoveType, position?: string, pieceType?: PieceType) {
+  switch (moveType) {
     case MoveType.MOVE:
-      return `${move.pieceType} ${move.position}`
+      return `${pieceType} ${position}`
     case MoveType.CAPTURE:
-      return `${move.pieceType} x${move.position}`
+      return `${pieceType} x${position}`
     case MoveType.MOVE_AND_PROMOTE:
-      return `pawn ${move.position} = ${move.pieceType}`
+      return `pawn ${position} = ${pieceType}`
     case MoveType.CAPTURE_AND_PROMOTE:
-      return `pawn x${move.position} = ${move.pieceType}`
+      return `pawn x${position} = ${pieceType}`
     case MoveType.SHORT_CASTLING:
       return 'O-o'
     case MoveType.LONG_CASTLING:

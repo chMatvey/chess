@@ -1,14 +1,28 @@
 import { Injectable } from '@angular/core';
-import { MoveLog, toMessage } from '../../logic/move-log'
+import { MoveLog } from '../../logic/move-log'
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovesHistoryService {
-  private history: MoveLog[] = []
+  private moveNumber = 0
+  private whiteMoves: MoveLog[] = []
+  private blackMoves: MoveLog[] = []
+
+  get whiteHistory(): MoveLog[] {
+    return this.whiteMoves
+  }
+
+  get blackHistory(): MoveLog[] {
+    return this.blackMoves
+  }
 
   saveMove(move: MoveLog): void {
-    console.log(toMessage(move))
-    this.history.push(move)
+    if (this.moveNumber % 2 === 0) {
+      this.whiteMoves.push(move)
+    } else {
+      this.blackMoves.push(move)
+    }
+    this.moveNumber++
   }
 }
