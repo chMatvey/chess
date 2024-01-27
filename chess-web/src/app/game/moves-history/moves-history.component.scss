@@ -1,0 +1,39 @@
+.moves-history {
+  display: flex;
+  justify-content: space-between;
+  font-family: Arial, sans-serif; // Ensuring a clean, readable font
+  height: 580px;
+  width: 400px;
+  background-color: #2b2927;
+  overflow: scroll;
+
+  .column {
+    width: 50%;
+    h3 {
+      text-align: center;
+      background-color: #262522;
+      padding: 8px;
+      margin: 0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 8px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid #302e2b;
+        background-color: #262522;
+        font-size: 12px;
+
+        &:nth-child(odd) {
+          background-color: #2b2927;
+        }
+      }
+    }
+  }
+}
+
