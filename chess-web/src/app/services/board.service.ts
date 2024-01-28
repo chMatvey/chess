@@ -37,7 +37,7 @@ export class BoardService {
 
   showOrHideMoves(piece: Piece): void {
     if (piece == this.pieceForWhichMovesDisplayed) {
-      // 1. Moves already displayed for this pieces -> hide moves and return
+      // 1. Moves already displayed for this piece -> hide moves and return
       this.hideMoves()
       return
     } else if (this.pieceForWhichMovesDisplayed !== null) {
